@@ -6,6 +6,8 @@
 //
 
 #include "LighthouseTracking.h"
+#include "stdafx.h"
+
 
 // Destructor
 LighthouseTracking::~LighthouseTracking() {
@@ -360,6 +362,9 @@ void LighthouseTracking::ParseTrackingFrame() {
 
 			break;
 
+#pragma region Controller
+
+
 
 		case vr::ETrackedDeviceClass::TrackedDeviceClass_Controller:
 			// Simliar to the HMD case block above, please adapt as you like
@@ -439,6 +444,55 @@ void LighthouseTracking::ParseTrackingFrame() {
 			}
 
 			break;
+#pragma endregion
+		case vr::ETrackedDeviceClass::TrackedDeviceClass_GenericTracker:
+			//tracking universe, device index, controller state object, controller pose object
+			vr::VRSystem()->GetControllerStateWithPose(vr::TrackingUniverseStanding, unDevice, &controllerState, sizeof(controllerState), &trackedDevicePose);
+			position = GetPosition(devicePose->mDeviceToAbsoluteTracking);
+			quaternion = GetRotation(devicePose->mDeviceToAbsoluteTracking);
+
+			vVel = trackedDevicePose.vVelocity;
+			vAngVel = trackedDevicePose.vAngularVelocity;
+			eTrackingResult = trackedDevicePose.eTrackingResult;
+			bPoseValid = trackedDevicePose.bPoseIsValid;
+
+			//std::cout << std::endl << "Vive Tracker Connected" << std::endl;
+			//std::cout << position.v[0] << ", " << position.v[1] << ", " << position.v[2] << std::endl;
+			char puf[1024];
+
+			sprintf_s(puf, sizeof(puf), "\nTracker\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
+			printf_s(puf);
+
+			sprintf_s(puf, sizeof(puf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+			printf_s(puf);
+
+			switch (eTrackingResult) {
+			case vr::ETrackingResult::TrackingResult_Uninitialized:
+				sprintf_s(puf, sizeof(puf), "Invalid tracking result\n");
+				printf_s(puf);
+				break;
+			case vr::ETrackingResult::TrackingResult_Calibrating_InProgress:
+				sprintf_s(puf, sizeof(puf), "Calibrating in progress\n");
+				printf_s(puf);
+				break;
+			case vr::ETrackingResult::TrackingResult_Calibrating_OutOfRange:
+				sprintf_s(puf, sizeof(puf), "Calibrating Out of range\n");
+				printf_s(puf);
+				break;
+			case vr::ETrackingResult::TrackingResult_Running_OK:
+				sprintf_s(puf, sizeof(puf), "Running OK\n");
+				printf_s(puf);
+				break;
+			case vr::ETrackingResult::TrackingResult_Running_OutOfRange:
+				sprintf_s(puf, sizeof(puf), "WARNING: Running Out of Range\n");
+				printf_s(puf);
+
+				break;
+			default:
+				sprintf_s(puf, sizeof(puf), "Default\n");
+				printf_s(puf);
+				break;
+			}
 		}
 	}
 }
