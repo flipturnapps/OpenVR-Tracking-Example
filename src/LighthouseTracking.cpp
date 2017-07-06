@@ -27,7 +27,7 @@ LighthouseTracking::LighthouseTracking() {
 	{
 		m_pHMD = NULL;
 		char buf[1024];
-		printf("Unable to init VR runtime: %s", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
+		printf("Unable to init VR runtime: %s \n", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
 		//sprintf_s(buf, sizeof(buf), "Unable to init VR runtime: %s", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
 		//printf_s(buf);
 		exit(EXIT_FAILURE);
