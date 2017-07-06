@@ -6,7 +6,7 @@
 //
 
 #include "LighthouseTracking.h"
-#include "stdafx.h"
+#include <stdio.h>
 
 
 // Destructor

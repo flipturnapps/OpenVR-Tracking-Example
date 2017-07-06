@@ -5,7 +5,7 @@
 // OpenVR
 #include <openvr.h>
 #include "samples\shared\Matrices.h"
-#include "stdafx.h"
+#include <stdio.h>
 #include <iostream>
 
 class LighthouseTracking {
