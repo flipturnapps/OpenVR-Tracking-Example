@@ -1,10 +1,10 @@
 // LIGHTHOUSETRACKING.h
-#ifndef _LIGHTHOUSETRACKING_H_
-#define _LIGHTHOUSETRACKING_H_
+#ifndef LIGHTHOUSETRACKING_H_
+#define LIGHTHOUSETRACKING_H_
 
 // OpenVR
-#include <openvr.h>
-#include "samples\shared\Matrices.h"
+#include <headers/openvr.h>
+#include "samples/shared/Matrices.h"
 #include <stdio.h>
 #include <iostream>
 
@@ -38,4 +38,4 @@ public:
 
 };
 
-#endif _LIGHTHOUSETRACKING_H_
+#endif LIGHTHOUSETRACKING_H_
