@@ -335,7 +335,8 @@ void LighthouseTracking::ParseTrackingFrame() {
 			//sprintf_s(buf, sizeof(buf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 			//printf_s(buf);
 
-			printf("\nHMD\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
+			printf("\nHMD\nx: %.4f y: %.4f z: %.4f\n", position.v[0], position.v[1], position.v[2]);
+			printf("qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 
 			
 			// and print some more info to the user about the state of the device/pose
@@ -413,7 +414,8 @@ void LighthouseTracking::ParseTrackingFrame() {
 				//sprintf_s(buf, sizeof(buf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 				//printf_s(buf);
 
-				printf("\nLeft Controller\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
+				printf("\nLeft Controller\nx: %.4f y: %.4f z: %.4f\n", position.v[0], position.v[1], position.v[2]);
+				printf("\nLeft Controller\n  qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 
 				switch (eTrackingResult) {
 				case vr::ETrackingResult::TrackingResult_Uninitialized:
@@ -453,7 +455,8 @@ void LighthouseTracking::ParseTrackingFrame() {
 				break;
 
 			case vr::TrackedControllerRole_RightHand:
-				// incomplete code, look at left hand for reference
+				printf("\nRight Controller\nx: %.4f y: %.4f z: %.4f\n", position.v[0], position.v[1], position.v[2]);
+				printf("\nRight Controller\n  qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 				break;
 
 			case vr::TrackedDeviceClass_TrackingReference:
@@ -480,11 +483,8 @@ void LighthouseTracking::ParseTrackingFrame() {
 			//std::cout << position.v[0] << ", " << position.v[1] << ", " << position.v[2] << std::endl;
 			char puf[1024];
 
-			//sprintf_s(puf, sizeof(puf), "\nTracker\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
-			//printf_s(puf);
-
-			//sprintf_s(puf, sizeof(puf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-			//printf_s(puf);
+			printf("\nTracker\nx: %.4f y: %.4f z: %.4f\n", position.v[0], position.v[1], position.v[2]);
+			printf("qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 
 			switch (eTrackingResult) {
 			case vr::ETrackingResult::TrackingResult_Uninitialized:
