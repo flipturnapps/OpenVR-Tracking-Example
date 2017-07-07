@@ -6,11 +6,13 @@ from platform import system
 from shutil import copy2
 from subprocess import call
 import shlex
+import sys
 
 nux = "nux" in system().lower()
 win = "win" in system().lower()
+found = False;
 
-print "Attempting to search for openvr sdk"
+print "Attempting to search for openvr sdk...."
 
 for root, dirs, files in os.walk(expanduser("~")):
 	for name in files: 
@@ -19,7 +21,11 @@ for root, dirs, files in os.walk(expanduser("~")):
 		if fnmatch.fnmatch(absn, match):
 			ssdist = len(match) - 0;
 			openvr_path = absn[:-ssdist] 
+			found = True
 
+if not found:
+	print "Failed to find the openvr sdk.... Exiting"
+	sys.exit();
 print "Found the openvr sdk:      '" + openvr_path + "'"
 
 if nux:
