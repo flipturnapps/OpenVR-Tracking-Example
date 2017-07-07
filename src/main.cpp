@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "LighthouseTracking.h"
 
-#if defined LINUX
+#if defined __linux
 #include <unistd.h>
 
 #elif defined _WIN32 || defined __CYGWIN__
@@ -18,7 +18,7 @@
 
 void cpSleep(int sleepMs)
 {
-#if defined LINUX
+#if defined __linux
     usleep(sleepMs * 1000);   // usleep takes sleep time in us (1 millionth of a second)
 
 #elif defined _WIN32 || defined __CYGWIN__
