@@ -6,20 +6,26 @@
 #include <stdio.h>
 #include "LighthouseTracking.h"
 
-#ifdef LINUX
+#if defined __linux
 #include <unistd.h>
-#endif
-#ifdef WINDOWS
+
+#elif defined _WIN32 || defined __CYGWIN__
 #include <windows.h>
+
+#else     
+#error Platform not supported
 #endif
 
 void cpSleep(int sleepMs)
 {
-#ifdef LINUX
+#if defined __linux
     usleep(sleepMs * 1000);   // usleep takes sleep time in us (1 millionth of a second)
-#endif
-#ifdef WINDOWS
+
+#elif defined _WIN32 || defined __CYGWIN__
     Sleep(sleepMs);
+
+#else     
+#error Platform not supported
 #endif
 }
 
@@ -39,7 +45,7 @@ int main()
 		while (lighthouseTracking->RunProcedure(bAcquireTrackingDataByWaitingForVREvents)) {
 
 			
-			cpSleep(1);
+			cpSleep(1000);
 		}
 
 		delete lighthouseTracking;
