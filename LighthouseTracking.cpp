@@ -6,7 +6,7 @@
 //
 
 #include "LighthouseTracking.h"
-#include "stdafx.h"
+#include <stdio.h>
 
 
 // Destructor
@@ -27,8 +27,9 @@ LighthouseTracking::LighthouseTracking() {
 	{
 		m_pHMD = NULL;
 		char buf[1024];
-		sprintf_s(buf, sizeof(buf), "Unable to init VR runtime: %s", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
-		printf_s(buf);
+		printf("Unable to init VR runtime: %s \n", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
+		//sprintf_s(buf, sizeof(buf), "Unable to init VR runtime: %s", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
+		//printf_s(buf);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -48,8 +49,8 @@ bool LighthouseTracking::RunProcedure(bool bWaitForEvents) {
 			// Process event
 			if (!ProcessVREvent(event)) {
 				char buf[1024];
-				sprintf_s(buf, sizeof(buf), "(OpenVR) service quit\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "(OpenVR) service quit\n");
+				//printf_s(buf);
 				//return false;
 			}
 
@@ -58,7 +59,7 @@ bool LighthouseTracking::RunProcedure(bool bWaitForEvents) {
 	}
 	else {
 		// ... or B) continous parsint of tracking data irrespective of events
-		std::cout << std::endl << "Parsing next frame...";
+		//std::cout << std::endl << "Parsing next frame...";
 
 		ParseTrackingFrame();
 	}
@@ -78,40 +79,40 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		{
 			//SetupRenderModelForTrackedDevice(event.trackedDeviceIndex);
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Device : %d attached\n", event.trackedDeviceIndex);
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Device : %d attached\n", event.trackedDeviceIndex);
+			//printf_s(buf);
 		}
 		break;
 
 		case vr::VREvent_TrackedDeviceDeactivated:
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Device : %d detached\n", event.trackedDeviceIndex);
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Device : %d detached\n", event.trackedDeviceIndex);
+			//printf_s(buf);
 		}
 		break;
 
 		case vr::VREvent_TrackedDeviceUpdated:
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Device : %d updated\n", event.trackedDeviceIndex);
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Device : %d updated\n", event.trackedDeviceIndex);
+			//printf_s(buf);
 		}
 		break;
 
 		case (vr::VREvent_DashboardActivated) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Dashboard activated\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Dashboard activated\n");
+			//printf_s(buf);
 		}
 		break;
 
 		case (vr::VREvent_DashboardDeactivated) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Dashboard deactivated\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Dashboard deactivated\n");
+			///printf_s(buf);
 
 		}
 		break;
@@ -119,8 +120,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_ChaperoneDataHasChanged) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Chaperone data has changed\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Chaperone data has changed\n");
+			//printf_s(buf);
 
 		}
 		break;
@@ -128,16 +129,16 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_ChaperoneSettingsHaveChanged) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Chaperone settings have changed\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Chaperone settings have changed\n");
+			//printf_s(buf);
 		}
 		break;
 
 		case (vr::VREvent_ChaperoneUniverseHasChanged) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Chaperone universe has changed\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Chaperone universe has changed\n");
+			//printf_s(buf);
 
 		}
 		break;
@@ -145,8 +146,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_ApplicationTransitionStarted) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Application Transition: Transition has started\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Application Transition: Transition has started\n");
+			//printf_s(buf);
 
 		}
 		break;
@@ -154,8 +155,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_ApplicationTransitionNewAppStarted) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Application transition: New app has started\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Application transition: New app has started\n");
+			//printf_s(buf);
 
 		}
 		break;
@@ -163,8 +164,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_Quit) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Received SteamVR Quit (%d", vr::VREvent_Quit, ")\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Received SteamVR Quit (%d", vr::VREvent_Quit, ")\n");
+			//printf_s(buf);
 
 			return false;
 		}
@@ -173,8 +174,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_ProcessQuit) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) SteamVR Quit Process (%d", vr::VREvent_ProcessQuit, ")\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) SteamVR Quit Process (%d", vr::VREvent_ProcessQuit, ")\n");
+			//printf_s(buf);
 
 			return false;
 		}
@@ -183,8 +184,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_QuitAborted_UserPrompt) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) SteamVR Quit Aborted UserPrompt (%d", vr::VREvent_QuitAborted_UserPrompt, ")\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) SteamVR Quit Aborted UserPrompt (%d", vr::VREvent_QuitAborted_UserPrompt, ")\n");
+			//printf_s(buf);
 
 			return false;
 		}
@@ -193,8 +194,8 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		case (vr::VREvent_QuitAcknowledged) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) SteamVR Quit Acknowledged (%d", vr::VREvent_QuitAcknowledged, ")\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) SteamVR Quit Acknowledged (%d", vr::VREvent_QuitAcknowledged, ")\n");
+			//printf_s(buf);
 
 			return false;
 		}
@@ -204,23 +205,23 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 		{
 
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) TrackedDeviceRoleChanged: %d\n", event.trackedDeviceIndex);
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) TrackedDeviceRoleChanged: %d\n", event.trackedDeviceIndex);
+			//printf_s(buf);
 			break;
 		}
 
 		case (vr::VREvent_TrackedDeviceUserInteractionStarted) :
 		{
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) TrackedDeviceUserInteractionStarted: %d\n", event.trackedDeviceIndex);
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) TrackedDeviceUserInteractionStarted: %d\n", event.trackedDeviceIndex);
+			//printf_s(buf);
 			break;
 		}
 
 		default:
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "(OpenVR) Event: %d\n", event.eventType);
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "(OpenVR) Event: %d\n", event.eventType);
+			//printf_s(buf);
 			break;
 	}
 
@@ -268,6 +269,14 @@ vr::HmdVector3_t LighthouseTracking::GetPosition(vr::HmdMatrix34_t matrix) {
 * http://www.3dgep.com/understanding-the-view-matrix/
 *
 */
+
+/*
+void sprintf_s(char* a, int b, char* c,int d)
+{
+	snprintf(a,b,c,d);
+}
+*/
+
 void LighthouseTracking::ParseTrackingFrame() {
 
 	// Process SteamVR device states
@@ -289,8 +298,8 @@ void LighthouseTracking::ParseTrackingFrame() {
 		if (vr::VRSystem()->IsInputFocusCapturedByAnotherProcess()) {
 			char buf[1024];
 
-			sprintf_s(buf, sizeof(buf), "\nInput Focus by Another Process\n");
-			printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "\nInput Focus by Another Process\n");
+			//printf_s(buf);
 		}
 
 		bool bPoseValid = trackedDevicePose.bPoseIsValid;
@@ -319,48 +328,56 @@ void LighthouseTracking::ParseTrackingFrame() {
 
 			// print the tracking data
 			char buf[1024];
-			sprintf_s(buf, sizeof(buf), "\nHMD\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
-			printf_s(buf);
-			sprintf_s(buf, sizeof(buf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-			printf_s(buf);
 
+			
+			//sprintf_s(buf, sizeof(buf), "\nHMD\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
+			//printf_s(buf);
+			//sprintf_s(buf, sizeof(buf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+			//printf_s(buf);
+
+			printf("\nHMD x: %.4f y: %.4f z: %.4f ", position.v[0], position.v[1], position.v[2]);
+			//printf("qw: %.2f qx: %.2f qy: %.2f qz: %.2f", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+
+			
 			// and print some more info to the user about the state of the device/pose
 			switch (eTrackingResult) {
 			case vr::ETrackingResult::TrackingResult_Uninitialized:
-				sprintf_s(buf, sizeof(buf), "Invalid tracking result\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "Invalid tracking result\n");
+				//printf_s(buf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Calibrating_InProgress:
-				sprintf_s(buf, sizeof(buf), "Calibrating in progress\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "Calibrating in progress\n");
+				//printf_s(buf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Calibrating_OutOfRange:
-				sprintf_s(buf, sizeof(buf), "Calibrating Out of range\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "Calibrating Out of range\n");
+				//printf_s(buf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Running_OK:
-				sprintf_s(buf, sizeof(buf), "Running OK\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "Running OK\n");
+				//printf_s(buf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Running_OutOfRange:
-				sprintf_s(buf, sizeof(buf), "WARNING: Running Out of Range\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "WARNING: Running Out of Range\n");
+				//printf_s(buf);
 
 				break;
 			default:
-				sprintf_s(buf, sizeof(buf), "Default\n");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "Default\n");
+				//printf_s(buf);
 				break;
 			}
 
+			/*
 			// print if the pose is valid or not
 			if (bPoseValid)
-				sprintf_s(buf, sizeof(buf), "Valid pose\n");
+				//sprintf_s(buf, sizeof(buf), "Valid pose\n");
 			else
-				sprintf_s(buf, sizeof(buf), "Invalid pose\n");
-			printf_s(buf);
-
+				//sprintf_s(buf, sizeof(buf), "Invalid pose\n");
+			//printf_s(buf);
+			*/
 			break;
+
 
 #pragma region Controller
 
@@ -385,61 +402,67 @@ void LighthouseTracking::ParseTrackingFrame() {
 				// invalid hand...
 				break;
 
-			//
+			
 			case vr::TrackedControllerRole_LeftHand:
 
 				char buf[1024];
 
-				sprintf_s(buf, sizeof(buf), "\nLeft Controller\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
-				printf_s(buf);
 
-				sprintf_s(buf, sizeof(buf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "\nLeft Controller\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
+				//printf_s(buf);
+
+				//sprintf_s(buf, sizeof(buf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+				//printf_s(buf);
+
+				printf("  LEFT x: %.4f y: %.4f z: %.4f", position.v[0], position.v[1], position.v[2]);
+				//printf(" qw: %.2f qx: %.2f qy: %.2f qz: %.2f", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 
 				switch (eTrackingResult) {
 				case vr::ETrackingResult::TrackingResult_Uninitialized:
-					sprintf_s(buf, sizeof(buf), "Invalid tracking result\n");
-					printf_s(buf);
+					//sprintf_s(buf, sizeof(buf), "Invalid tracking result\n");
+					//printf_s(buf);
 					break;
 				case vr::ETrackingResult::TrackingResult_Calibrating_InProgress:
-					sprintf_s(buf, sizeof(buf), "Calibrating in progress\n");
-					printf_s(buf);
+					//sprintf_s(buf, sizeof(buf), "Calibrating in progress\n");
+					//printf_s(buf);
 					break;
 				case vr::ETrackingResult::TrackingResult_Calibrating_OutOfRange:
-					sprintf_s(buf, sizeof(buf), "Calibrating Out of range\n");
-					printf_s(buf);
+					//sprintf_s(buf, sizeof(buf), "Calibrating Out of range\n");
+					//printf_s(buf);
 					break;
 				case vr::ETrackingResult::TrackingResult_Running_OK:
-					sprintf_s(buf, sizeof(buf), "Running OK\n");
-					printf_s(buf);
+					//sprintf_s(buf, sizeof(buf), "Running OK\n");
+					//printf_s(buf);
 					break;
 				case vr::ETrackingResult::TrackingResult_Running_OutOfRange:
-					sprintf_s(buf, sizeof(buf), "WARNING: Running Out of Range\n");
-					printf_s(buf);
+					//sprintf_s(buf, sizeof(buf), "WARNING: Running Out of Range\n");
+					//printf_s(buf);
 
 					break;
 				default:
-					sprintf_s(buf, sizeof(buf), "Default\n");
-					printf_s(buf);
+					//sprintf_s(buf, sizeof(buf), "Default\n");
+					//printf_s(buf);
 					break;
 				}
 
+				/*
 				if (bPoseValid)
-					sprintf_s(buf, sizeof(buf), "Valid pose\n");
+					//sprintf_s(buf, sizeof(buf), "Valid pose\n");
 				else
-					sprintf_s(buf, sizeof(buf), "Invalid pose\n");
-				printf_s(buf);
-
+					//sprintf_s(buf, sizeof(buf), "Invalid pose\n");
+				//printf_s(buf);
+				*/
 				break;
 
 			case vr::TrackedControllerRole_RightHand:
-				// incomplete code, look at left hand for reference
+				printf("  RIGHT x: %.4f y: %.4f z: %.4f", position.v[0], position.v[1], position.v[2]);
+				//printf(" qw: %.2f qx: %.2f qy: %.2f qz: %.2f", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 				break;
 
 			case vr::TrackedDeviceClass_TrackingReference:
 				// incomplete code, only here for switch reference
-				sprintf_s(buf, sizeof(buf), "Camera / Base Station");
-				printf_s(buf);
+				//sprintf_s(buf, sizeof(buf), "Camera / Base Station");
+				//printf_s(buf);
 				break;
 			}
 
@@ -460,37 +483,34 @@ void LighthouseTracking::ParseTrackingFrame() {
 			//std::cout << position.v[0] << ", " << position.v[1] << ", " << position.v[2] << std::endl;
 			char puf[1024];
 
-			sprintf_s(puf, sizeof(puf), "\nTracker\nx: %.2f y: %.2f z: %.2f\n", position.v[0], position.v[1], position.v[2]);
-			printf_s(puf);
-
-			sprintf_s(puf, sizeof(puf), "qw: %.2f qx: %.2f qy: %.2f qz: %.2f\n", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-			printf_s(puf);
+			printf("TRACKER x: %.4f y: %.4f z: %.4f", position.v[0], position.v[1], position.v[2]);
+			//printf(" qw: %.2f qx: %.2f qy: %.2f qz: %.2f", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 
 			switch (eTrackingResult) {
 			case vr::ETrackingResult::TrackingResult_Uninitialized:
-				sprintf_s(puf, sizeof(puf), "Invalid tracking result\n");
-				printf_s(puf);
+				//sprintf_s(puf, sizeof(puf), "Invalid tracking result\n");
+				//printf_s(puf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Calibrating_InProgress:
-				sprintf_s(puf, sizeof(puf), "Calibrating in progress\n");
-				printf_s(puf);
+				//sprintf_s(puf, sizeof(puf), "Calibrating in progress\n");
+				//printf_s(puf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Calibrating_OutOfRange:
-				sprintf_s(puf, sizeof(puf), "Calibrating Out of range\n");
-				printf_s(puf);
+				//sprintf_s(puf, sizeof(puf), "Calibrating Out of range\n");
+				//printf_s(puf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Running_OK:
-				sprintf_s(puf, sizeof(puf), "Running OK\n");
-				printf_s(puf);
+				//sprintf_s(puf, sizeof(puf), "Running OK\n");
+				//printf_s(puf);
 				break;
 			case vr::ETrackingResult::TrackingResult_Running_OutOfRange:
-				sprintf_s(puf, sizeof(puf), "WARNING: Running Out of Range\n");
-				printf_s(puf);
+				//sprintf_s(puf, sizeof(puf), "WARNING: Running Out of Range\n");
+				//printf_s(puf);
 
 				break;
 			default:
-				sprintf_s(puf, sizeof(puf), "Default\n");
-				printf_s(puf);
+				//sprintf_s(puf, sizeof(puf), "Default\n");
+				//printf_s(puf);
 				break;
 			}
 		}
