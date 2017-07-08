@@ -45,7 +45,7 @@ int main()
 		while (lighthouseTracking->RunProcedure(bAcquireTrackingDataByWaitingForVREvents)) {
 
 			
-			cpSleep(1000);
+			cpSleep(1);
 		}
 
 		delete lighthouseTracking;
