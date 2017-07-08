@@ -8,6 +8,12 @@ from subprocess import call
 import shlex
 import sys
 
+def makeWinPath(path):
+	path = path.replace("/cygdrive/c","C:\\")
+	path = path.replace("/","\\")
+	return path
+
+
 nux = "nux" in system().lower()
 win = "win" in system().lower()
 found = False;
@@ -25,8 +31,13 @@ for root, dirs, files in os.walk(expanduser("~")):
 
 if not found:
 	print "Failed to find the openvr sdk.... Exiting"
-	sys.exit();
+	#sys.exit();
+	
+openvr_path = "C:\\Users\\kellark\\Documents\\openvr"
+
 print "Found the openvr sdk:      '" + openvr_path + "'"
+
+
 
 if nux:
 	openvr_bin = openvr_path + "/bin/linux64" 
@@ -56,7 +67,8 @@ out = open(outfile,'w+')
 if nux:
 	out.write("#! /bin/sh \n")
 
-print "Writing output file to:    '" + outfile + "'";
+
+print "Writing output file to:    '" + outfile  + "'";
 
 out.write(comp + "\n")
 
