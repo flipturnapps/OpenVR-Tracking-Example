@@ -32,7 +32,7 @@ These screenshots show the terminal at the different stages of building and runn
 | ![Py script on Linux](http://i.imgur.com/ny2F7Tr.png) |  ![Python script on Windows](http://i.imgur.com/JJ5JQBN.png) |
 | ![Linux: running compilation command](http://i.imgur.com/LJLZnbc.png) | ![Windows: running complation command](http://i.imgur.com/ywUUtpU.png) |
 | ![Linux: compiling succeeds](http://i.imgur.com/AwVaQDs.png) | ![Windows: compiling succeeds](http://i.imgur.com/QS3EmGE.png) |
-| ![Errors on linux](http://i.imgur.com/NNOviFB.png) | ![Runnning the example on windows](http://i.imgur.com/QcLUkPC.png)|
+| ![Runnning the example on linux](http://i.imgur.com/AUSndW8.png) | ![Runnning the example on windows](http://i.imgur.com/QcLUkPC.png)|
 
 
 
