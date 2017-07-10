@@ -24,7 +24,6 @@ bash build/compile.sh
 ```
 
 
-
 ##  Troubleshooting:
 
 *Unable to init VR runtime: Hmd Not Found (108)*
