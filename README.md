@@ -6,26 +6,22 @@ The project needs to be built from source.  Follow the step by step guide below 
 
 ##  How do I compile it?
 
-* Make sure g++ and python is installed.  
-  * If using [cygwin](https://www.cygwin.com/) for Windows (recommended), these packages may need to be installed from the cygwin installer.
-* Have [openvr](https://github.com/ValveSoftware/openvr) cloned somewhere convenient
+Make sure g++ and python is installed. If using [cygwin](https://www.cygwin.com/) for Windows (recommended), these packages may need to be installed from the cygwin installer.  
 
-1. Clone this repository and cd to the cloned repo
-2. Run the python script with the path to the openvr sdk as a command line argument ```python build.py /path/to/openvr/clone```
-3. Run the compile command with ```bash /build/compile.sh```
-4. The executable can be found at ```/build/track```
+Have [openvr](https://github.com/ValveSoftware/openvr) cloned somewhere convenient
 
 ```shell
+
 git clone https://github.com/flipturnapps/OpenVR-Tracking-Example.git ViveTrack
 cd ViveTrack
-python build.py ~/Documents/openvr/
+python build.py ~/path/to/openvr/
 bash build/compile.sh
-./build/track
-```
 
-##  How do I use it?
-1. Start up Steam VR.
-2. Run the exetuable: ```./build/track```
+# Start up SteamVR and connect the Vive
+
+./build/track
+
+```
 
 
 
@@ -39,4 +35,8 @@ Solution: Attach the HMD to the computer
 *Unable to init VR runtime: Not starting vrserver for background app (121)*
 
 Solution: Start Steam VR
+
+*Unable to init VR runtime: vrclient Shared Lib Not Found (102)*
+
+Although this project compiles on Linux, I have been getting this error on every time trying to test it on Linux.  My SteamVR doesn't work on my Linux installation, so it is no suprise that this example doesn't work either.
 
