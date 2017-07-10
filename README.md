@@ -15,6 +15,13 @@ The project needs to be built from source.  Follow the step by step guide below 
 3. Run the compile command with ```bash /build/compile.sh```
 4. The executable can be found at ```/build/track```
 
+```shell
+git clone https://github.com/flipturnapps/OpenVR-Tracking-Example.git ViveTrack
+cd ViveTrack
+python build.py ~/Documents/openvr/
+bash build/compile.sh
+./build/track
+```
 
 ##  How do I use it?
 1. Start up Steam VR.
