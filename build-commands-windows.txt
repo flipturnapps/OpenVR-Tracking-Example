@@ -1,5 +1,0 @@
-export LC=C:\\Users\\kellark\\Documents\\openvr\\bin\\win64
-export HD=C:\\Users\\kellark\\Documents\\openvr
-
-g++ -LC:\\Users\\kellark\\Documents\\openvr\\bin\\win64 -IC:\\Users\\kellark\\Documents\\openvr -Wl,-rpath,C:\\Users\\kellark\\Documents\\openvr\\bin\\win64 -Wall -Wextra  -std=c++0x -fpermissive -o track *.cpp -lopenvr_api
-

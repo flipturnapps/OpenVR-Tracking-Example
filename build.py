@@ -8,7 +8,6 @@ from subprocess import call
 import shlex
 import sys
 
-
 def makeWinPath(path):
 	path = path.replace("/cygdrive/c","C:\\")
 	path = path.replace("/","\\")
@@ -86,11 +85,15 @@ print "Found the openvr binaries: '" + openvr_bin + "'\n"
 
 print "Generating compile command..."
 
-comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -fpermissive -o track *.cpp -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
+comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -fpermissive -o build/track *.cpp -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
 
 print " - Command: " + comp + "\n"
 
-libout = os.getcwd()
+libout = os.path.join(os.getcwd(),"build")
+
+if not os.path.exists(libout):
+    os.makedirs(libout)
+
 if win:
 	libout = makeWinPath(libout)
 	
@@ -102,9 +105,9 @@ for root, dirs, files in os.walk(openvr_bin):
 		copy2(absn, libout)
 
 if nux:
-	outfile =os.getcwd() + "/compile.sh";
+	outfile = libout + "/compile.sh";
 if win:
-	outfile =os.getcwd() + "\\compile.bat";
+	outfile = libout + "\\compile.bat";
 	outfile = makeWinPath(outfile)
 	
 out = open(outfile,'w+')
