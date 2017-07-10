@@ -1,20 +1,29 @@
 #  What is this?
-A rapid and simple example of how to start a background process for listening to HTC Vive Lighthouse tracking data. 
-
-Uses OpenVR 1.0.5.
-
-Compiled using Visual Studio 2013. Please adapt as suitable. 
+This project is a rapid and simple example of how to start a background process for listening to HTC Vive Lighthouse tracking data.  The project interfaces with [Valve's OpenVR SDK](https://github.com/ValveSoftware/openvr).  It was developed cross platform, so the project compiles on both Windows and Linux systems.  
 
 ##  How do I run it?
-There is an executable in the Binary folder. Unarchive that and run it through a console after you've started Steam VR. Background processes are not allowed to start up SteamVR by themselves. 
+The project needs to be built from source.  Follow the step by step guide below to compile the project.
 
 ##  How do I compile it?
-1. Make sure that you point your includes and library bin folder to where you have openvr installed on your machine.
-2. Make sure you've got the openvr_api.dll in the same folder as the built example
+
+1. Make sure g++ and python is installed.  
+  * If using [cygwin](https://www.cygwin.com/) for Windows (recommended), these packages may need to be installed from the cygwin installer.
+2. Clone [openvr](https://github.com/ValveSoftware/openvr) somewhere convenient
+  * ```git clone https://github.com/flipturnapps/OpenVR-Tracking-Example.git```
+3. Clone this repository and cd to the cloned repo in terminal/cygwin
+4. Run the python script with the path to the openvr sdk as a command line argument
+  * ```python build.py /path/to/openvr/clone```
+5. Run the compile command
+  * The python code should create /build/compile.sh(.bat) 
+  * Don't change the working directory
+  * Run the script with ```bash /build/compile.sh```
+6. The executable can be found at /build/track 
+
 
 ##  How do I use it?
-1. Start up Steam VR
-2. Compile and start the example - it launches as a background application
+1. Start up Steam VR.
+2. Run the exetuable: ```./build/track```
+
 
 
 ##  Troubleshooting:

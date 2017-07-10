@@ -20,7 +20,7 @@ nux = "nux" in system().lower()
 win = "win" in system().lower()
 found = False;
 
-print "\nThis is the VR Track build script.\n"
+print "\nThis script will output a script to build the VR Track example.\n"
 testfile_rel_path = "src/openvr_api_public.cpp"
 
 if (len(sys.argv) > 1):
@@ -49,7 +49,7 @@ if not found:
 				found = True
 				break
 
-if not found:
+if (not found) and win:
 	print "Attempting to search C:\\Users\\ for openvr sdk...."
 	winroot = "C:\\Users\\"
 	for root, dirs, files in os.walk(winroot):
@@ -63,10 +63,8 @@ if not found:
 				break
 			
 if not found:
-	print "Failed to find the openvr sdk."
+	print "Failed to find the openvr sdk. Clone Valve's openvr sdk and try again."
 	sys.exit()
-
-#openvr_path = "C:\\Users\\kellark\\Documents\\openvr"
 
 if win:
 	openvr_path = makeWinPath(openvr_path)
