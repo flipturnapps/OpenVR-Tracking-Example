@@ -17,8 +17,8 @@ private:
 	Matrix4 m_rmat4DevicePose[vr::k_unMaxTrackedDeviceCount];
 
 	// Position and rotation of pose
-	vr::HmdVector3_t LighthouseTracking::GetPosition(vr::HmdMatrix34_t matrix);
-	vr::HmdQuaternion_t LighthouseTracking::GetRotation(vr::HmdMatrix34_t matrix);
+	vr::HmdVector3_t GetPosition(vr::HmdMatrix34_t matrix);
+	vr::HmdQuaternion_t GetRotation(vr::HmdMatrix34_t matrix);
 
 	// If false the program will parse tracking data continously and not wait for openvr events
 	bool bWaitForEventsBeforeParsing = false;

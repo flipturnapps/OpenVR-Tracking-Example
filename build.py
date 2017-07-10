@@ -18,7 +18,7 @@ def makeWinPath(path):
 
 nux = "nux" in system().lower()
 win = "win" in system().lower()
-found = False;
+found = False
 
 print "\nThis script will output a script to build the VR Track example.\n"
 testfile_rel_path = "src/openvr_api_public.cpp"
@@ -34,7 +34,7 @@ if not found:
 	found = os.path.isfile(ifile) 
 
 if found:
-	openvr_path = ifile[:-(len(testfile_rel_path)+1)] ;
+	openvr_path = ifile[:-(len(testfile_rel_path)+1)] 
 
 
 if not found:
@@ -44,7 +44,7 @@ if not found:
 			absn = os.path.join(root, name)
 			match = '*src/openvr_api_public.cpp'
 			if fnmatch.fnmatch(absn, match):
-				ssdist = len(match) - 0;
+				ssdist = len(match) - 0
 				openvr_path = absn[:-ssdist] 
 				found = True
 				break
@@ -83,7 +83,7 @@ print "Found the openvr binaries: '" + openvr_bin + "'\n"
 
 print "Generating compile command..."
 
-comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -fpermissive -o build/track *.cpp -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
+comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -o build/track *.cpp -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
 
 print " - Command: " + comp + "\n"
 
@@ -103,9 +103,9 @@ for root, dirs, files in os.walk(openvr_bin):
 		copy2(absn, libout)
 
 if nux:
-	outfile = libout + "/compile.sh";
+	outfile = libout + "/compile.sh"
 if win:
-	outfile = libout + "\\compile.bat";
+	outfile = libout + "\\compile.bat"
 	outfile = makeWinPath(outfile)
 	
 out = open(outfile,'w+')
@@ -114,7 +114,7 @@ if nux:
 	out.write("#! /bin/sh \n")
 
 
-print "Writing output file to:    '" + outfile  + "'\n";
+print "Writing output file to:    '" + outfile  + "'\n"
 
 out.write(comp + "\n")
 
