@@ -6,11 +6,11 @@ The project needs to be built from source.  Follow the step by step guide below 
 
 ##  How do I compile it?
 
-Make sure g++ and python is installed. If using [cygwin](https://www.cygwin.com/) for Windows (recommended), these packages may need to be installed from the cygwin installer.  
+Make sure **g++** and **python** are installed. If using [cygwin](https://www.cygwin.com/) for Windows (recommended), these packages may need to be installed from the cygwin installer.  
 
 Have [openvr](https://github.com/ValveSoftware/openvr) cloned somewhere convenient
 
-This code example shows how to use the build script to run the example: 
+This example code shows how to build/run the project: 
 
 ```shell
 
@@ -24,6 +24,8 @@ bash build/compile.sh
 ./build/track
 
 ```
+
+These screenshots show the terminal at the different stages of building and running the example:
 
 | Linux  |      Windows      
 |----------|:-------------:|
