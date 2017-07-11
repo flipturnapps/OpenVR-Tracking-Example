@@ -32,7 +32,7 @@ void cpSleep(int sleepMs)
 int main()
 {
 	// If false we'll parse tracking data continously, if true we parse when an openvr event fires
-	bool bAcquireTrackingDataByWaitingForVREvents = true;
+	bool bAcquireTrackingDataByWaitingForVREvents = false;
 
 	// Create a new LighthouseTracking instance and parse as needed
 	LighthouseTracking *lighthouseTracking = new LighthouseTracking();

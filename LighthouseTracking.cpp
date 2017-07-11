@@ -160,7 +160,7 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 			/* info */ printf("\n(OpenVR) SteamVR Quit Acknowledged (%d", vr::VREvent_QuitAcknowledged, ")");
 			return false;
 		}
-												  break;
+		break;
 
 		case (vr::VREvent_TrackedDeviceRoleChanged) :
 		{
@@ -253,7 +253,7 @@ void LighthouseTracking::ParseTrackingFrame() {
 		vr::HmdQuaternion_t quaternion;
 
 		if (vr::VRSystem()->IsInputFocusCapturedByAnotherProcess()) {
-			/* info */ printf( "\nInput Focus by Another Process\n");
+			/* info */ printf( "\nInput Focus by Another Process");
 		}
 
 		bool bPoseValid = trackedDevicePose.bPoseIsValid;
@@ -372,9 +372,9 @@ void LighthouseTracking::ParseTrackingFrame() {
 					// omitted-info printf( "Valid pose\n");
 				else
 					// omitted-info printf( "Invalid pose\n");
-				
-				break;
 				*/
+				break;
+				
 			case vr::TrackedControllerRole_RightHand:
 				printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
 				//printf(" qw: %.2f qx: %.2f qy: %.2f qz: %.2f", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
