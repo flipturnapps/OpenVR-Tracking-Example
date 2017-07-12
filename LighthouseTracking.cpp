@@ -235,6 +235,16 @@ void sprintf_s(char* a, int b, char* c,int d)
 */
 
 void LighthouseTracking::ParseTrackingFrame() {
+	
+	static FILE *out_file_x;
+	if(!out_file_x)
+		out_file_x = fopen("r-x.txt", "w");
+	static FILE *out_file_y;
+	if(!out_file_y)
+		out_file_y = fopen("r-y.txt", "w");
+	static FILE *out_file_z;
+	if(!out_file_z)
+		out_file_z = fopen("r-z.txt", "w");
 
 	// Process SteamVR device states
 	for (vr::TrackedDeviceIndex_t unDevice = 0; unDevice < vr::k_unMaxTrackedDeviceCount; unDevice++)
@@ -376,6 +386,10 @@ void LighthouseTracking::ParseTrackingFrame() {
 				break;
 				
 			case vr::TrackedControllerRole_RightHand:
+				fprintf(out_file_x, "%.3f\n", position.v[0]);
+				fprintf(out_file_y, "%.3f\n", position.v[1]);
+				fprintf(out_file_z, "%.3f\n", position.v[2]);
+
 				printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
 				//printf(" qw: %.2f qx: %.2f qy: %.2f qz: %.2f", quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 				break;
