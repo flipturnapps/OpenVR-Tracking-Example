@@ -20,4 +20,4 @@ public:
 	void ParseTrackingFrame();
 };
 
-#endif LIGHTHOUSETRACKING_H_
+#endif

@@ -1,7 +1,6 @@
 #include "LighthouseTracking.h"
 #include <stdio.h>
 
-
 // Destructor
 LighthouseTracking::~LighthouseTracking() {
 	if (vr_pointer != NULL)
@@ -143,28 +142,28 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 
 		case vr::VREvent_Quit:
 		{
-			printf("\n(OpenVR) Received SteamVR Quit (%d", vr::VREvent_Quit, ")");
+			printf("\n(OpenVR) Received SteamVR Quit (%d%s", vr::VREvent_Quit, ")");
 			return false;
 		}
 		break;
 
 		case vr::VREvent_ProcessQuit:
 		{
-			printf("\n(OpenVR) SteamVR Quit Process (%d", vr::VREvent_ProcessQuit, ")");
+			printf("\n(OpenVR) SteamVR Quit Process (%d%s", vr::VREvent_ProcessQuit, ")");
 			return false;
 		}
 		break;
 
 		case vr::VREvent_QuitAborted_UserPrompt:
 		{
-			printf("\n(OpenVR) SteamVR Quit Aborted UserPrompt (%d", vr::VREvent_QuitAborted_UserPrompt, ")");
+			printf("\n(OpenVR) SteamVR Quit Aborted UserPrompt (%d%s", vr::VREvent_QuitAborted_UserPrompt, ")");
 			return false;
 		}
 		break;
 
 		case vr::VREvent_QuitAcknowledged:
 		{
-			printf("\n(OpenVR) SteamVR Quit Acknowledged (%d", vr::VREvent_QuitAcknowledged, ")");
+			printf("\n(OpenVR) SteamVR Quit Acknowledged (%d%s", vr::VREvent_QuitAcknowledged, ")");
 			return false;
 		}
 		break;
@@ -231,14 +230,15 @@ void LighthouseTracking::ParseTrackingFrame()
 			vr_pointer->GetControllerStateWithPose(vr::TrackingUniverseStanding, unDevice, &controllerState, sizeof(controllerState), &trackedDevicePose);
 			position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
 			vr::ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(unDevice);
+
+			//printf("The mask for %s@'%d' is %d", "k_EButton_Grip", vr::EVRButtonId::k_EButton_Grip, vr::ButtonMaskFromId( vr::EVRButtonId::k_EButton_Grip ));
+
 			if (role == vr::TrackedControllerRole_Invalid)
 				continue;
 			else if (role == vr::TrackedControllerRole_LeftHand)
 				printf(" LEFT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);	
 			else if (role == vr::TrackedControllerRole_RightHand)
 				printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
-			else if (role == vr::TrackedDeviceClass_TrackingReference)
-				continue;
 		}
 			
 	}
