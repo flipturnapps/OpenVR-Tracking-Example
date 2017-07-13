@@ -1,11 +1,15 @@
 #include "LighthouseTracking.h"
 #include <stdio.h>
 
+using namespace vr;
+
+
 // Destructor
-LighthouseTracking::~LighthouseTracking() {
+LighthouseTracking::~LighthouseTracking() 
+{
 	if (vr_pointer != NULL)
 	{
-		vr::VR_Shutdown();
+		VR_Shutdown();
 		vr_pointer = NULL;
 	}
 }
@@ -14,10 +18,10 @@ LighthouseTracking::~LighthouseTracking() {
 LighthouseTracking::LighthouseTracking() 
 {
 	// Definition of EVRInitError local variable
-	vr::EVRInitError eError = vr::VRInitError_None;
+	EVRInitError eError = VRInitError_None;
 
 	/*
-	vr::VR_Init (
+	VR_Init (
 	  	arg1: Pointer to vr:EVRInitError type (I think its an enum)
 	  	arg2: Must be of type vr::EVRApplicationType
 
@@ -29,13 +33,14 @@ LighthouseTracking::LighthouseTracking()
 	        	* VRApplication_Overlay - "An application that only interacts with overlays or the dashboard.""
 	        	* VRApplication_Utility
 	*/
-	vr_pointer = vr::VR_Init(&eError, vr::VRApplication_Background);
+
+	vr_pointer = VR_Init(&eError, VRApplication_Background);
 
 	// If the init failed because of the error
-	if (eError != vr::VRInitError_None)
+	if (eError != VRInitError_None)
 	{
 		vr_pointer = NULL;
-		printf("Unable to init VR runtime: %s \n", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
+		printf("Unable to init VR runtime: %s \n", VR_GetVRInitErrorAsEnglishDescription(eError));
 		exit(EXIT_FAILURE);
 	}
 }
@@ -49,11 +54,14 @@ LighthouseTracking::LighthouseTracking()
 */
 bool LighthouseTracking::RunProcedure(bool bShouldWaitForEvents) 
 {
+
+	
+
 	// Either A) wait for events, such as hand controller button press, before parsing...
 	if (bShouldWaitForEvents) 
 	{
 		// Define a VREvent
-		vr::VREvent_t event;
+		VREvent_t event;
 
 		/* 
 			{ vr::IVRSystem. , vr_pointer-> } PollNextEvent(
@@ -96,83 +104,83 @@ bool LighthouseTracking::RunProcedure(bool bShouldWaitForEvents)
 	* Takes a single vr:VREvent_t and processes the result
 	* Returns false if OpenVR has quit, otherwise returns true
 */
-bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
+bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 {
 	switch (event.eventType)
 	{
-		case vr::VREvent_TrackedDeviceActivated:
+		case VREvent_TrackedDeviceActivated:
 			 printf("\n(OpenVR) Device : %d attached", event.trackedDeviceIndex);
 		break;
 
-		case vr::VREvent_TrackedDeviceDeactivated:
+		case VREvent_TrackedDeviceDeactivated:
 			printf("\n(OpenVR) Device : %d detached", event.trackedDeviceIndex);
 		break;
 
-		case vr::VREvent_TrackedDeviceUpdated:
+		case VREvent_TrackedDeviceUpdated:
 			printf("\n(OpenVR) Device : %d updated", event.trackedDeviceIndex);
 		break;
 
-		case vr::VREvent_DashboardActivated:
+		case VREvent_DashboardActivated:
 			printf("\n(OpenVR) Dashboard activated");
 		break;
 
-		case vr::VREvent_DashboardDeactivated:
+		case VREvent_DashboardDeactivated:
 			printf("\n(OpenVR) Dashboard deactivated");
 		break;
 
-		case vr::VREvent_ChaperoneDataHasChanged:
+		case VREvent_ChaperoneDataHasChanged:
 			printf("\n(OpenVR) Chaperone data has changed");
 		break;
 
-		case vr::VREvent_ChaperoneSettingsHaveChanged:
+		case VREvent_ChaperoneSettingsHaveChanged:
 			printf("\n(OpenVR) Chaperone settings have changed");
 		break;
 
-		case vr::VREvent_ChaperoneUniverseHasChanged:
+		case VREvent_ChaperoneUniverseHasChanged:
 			printf("\n(OpenVR) Chaperone universe has changed");
 		break;
 
-		case vr::VREvent_ApplicationTransitionStarted:
+		case VREvent_ApplicationTransitionStarted:
 			printf("\n(OpenVR) Application Transition: Transition has started");
 		break;
 
-		case vr::VREvent_ApplicationTransitionNewAppStarted:
+		case VREvent_ApplicationTransitionNewAppStarted:
 			printf("\n(OpenVR) Application transition: New app has started");
 		break;
 
-		case vr::VREvent_Quit:
+		case VREvent_Quit:
 		{
-			printf("\n(OpenVR) Received SteamVR Quit (%d%s", vr::VREvent_Quit, ")");
+			printf("\n(OpenVR) Received SteamVR Quit (%d%s", VREvent_Quit, ")");
 			return false;
 		}
 		break;
 
-		case vr::VREvent_ProcessQuit:
+		case VREvent_ProcessQuit:
 		{
-			printf("\n(OpenVR) SteamVR Quit Process (%d%s", vr::VREvent_ProcessQuit, ")");
+			printf("\n(OpenVR) SteamVR Quit Process (%d%s", VREvent_ProcessQuit, ")");
 			return false;
 		}
 		break;
 
-		case vr::VREvent_QuitAborted_UserPrompt:
+		case VREvent_QuitAborted_UserPrompt:
 		{
-			printf("\n(OpenVR) SteamVR Quit Aborted UserPrompt (%d%s", vr::VREvent_QuitAborted_UserPrompt, ")");
+			printf("\n(OpenVR) SteamVR Quit Aborted UserPrompt (%d%s", VREvent_QuitAborted_UserPrompt, ")");
 			return false;
 		}
 		break;
 
-		case vr::VREvent_QuitAcknowledged:
+		case VREvent_QuitAcknowledged:
 		{
-			printf("\n(OpenVR) SteamVR Quit Acknowledged (%d%s", vr::VREvent_QuitAcknowledged, ")");
+			printf("\n(OpenVR) SteamVR Quit Acknowledged (%d%s", VREvent_QuitAcknowledged, ")");
 			return false;
 		}
 		break;
 
-		case vr::VREvent_TrackedDeviceRoleChanged:
+		case VREvent_TrackedDeviceRoleChanged:
 			printf("\n(OpenVR) TrackedDeviceRoleChanged: %d", event.trackedDeviceIndex);
 		break;
 
-		case vr::VREvent_TrackedDeviceUserInteractionStarted:
+		case VREvent_TrackedDeviceUserInteractionStarted:
 			printf("\n(OpenVR) TrackedDeviceUserInteractionStarted: %d", event.trackedDeviceIndex);
 		break;
 		
@@ -186,9 +194,9 @@ bool LighthouseTracking::ProcessVREvent(const vr::VREvent_t & event)
 	return true;
 }
 
-vr::HmdVector3_t LighthouseTracking::GetPosition(vr::HmdMatrix34_t matrix) 
+HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix) 
 {
-	vr::HmdVector3_t vector;
+	HmdVector3_t vector;
 
 	vector.v[0] = matrix.m[0][3];
 	vector.v[1] = matrix.m[1][3];
@@ -201,43 +209,43 @@ void LighthouseTracking::ParseTrackingFrame()
 {
 	/*
 		This for loop will iterate over all of the tracked devices.
-		* To understand what is happening here, think of "vr::TrackedDeviceIndex_t" as an int
-		* unDevice is the locaL variable holding the index.
+		* deviceId is the locaL variable holding the index.
 	*/
-	for (vr::TrackedDeviceIndex_t unDevice = 0; unDevice < vr::k_unMaxTrackedDeviceCount; unDevice++)
+	for (unsigned int deviceId; deviceId < k_unMaxTrackedDeviceCount; deviceId++)
 	{
+	
 		// if not connected just skip the rest of the routine
-		if (!vr_pointer->IsTrackedDeviceConnected(unDevice))
+		if (!vr_pointer->IsTrackedDeviceConnected(deviceId))
 			continue;
 
-		vr::TrackedDevicePose_t trackedDevicePose;
-		vr::VRControllerState_t controllerState;
-		vr::HmdVector3_t position;
+		TrackedDevicePose_t trackedDevicePose;
+		VRControllerState_t controllerState;
+		HmdVector3_t position;
 
 		if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
 			printf( "\nInput Focus by Another Process");
 
 		// Get what type of device it is and work with its data
-		vr::ETrackedDeviceClass trackedDeviceClass = vr_pointer->GetTrackedDeviceClass(unDevice);
-		if (trackedDeviceClass == vr::ETrackedDeviceClass::TrackedDeviceClass_HMD)
+		ETrackedDeviceClass trackedDeviceClass = vr_pointer->GetTrackedDeviceClass(deviceId);
+		if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD)
 		{
-			vr_pointer->GetDeviceToAbsoluteTrackingPose(vr::TrackingUniverseStanding, 0, &trackedDevicePose, 1);
+			vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1);
 			position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
 			printf("\nCOORDS-- HMD x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
 		}
-		else if (trackedDeviceClass == vr::ETrackedDeviceClass::TrackedDeviceClass_Controller)
+		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
 		{
-			vr_pointer->GetControllerStateWithPose(vr::TrackingUniverseStanding, unDevice, &controllerState, sizeof(controllerState), &trackedDevicePose);
+			vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 			position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-			vr::ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(unDevice);
+			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(deviceId);
 
 			//printf("The mask for %s@'%d' is %d", "k_EButton_Grip", vr::EVRButtonId::k_EButton_Grip, vr::ButtonMaskFromId( vr::EVRButtonId::k_EButton_Grip ));
 
-			if (role == vr::TrackedControllerRole_Invalid)
+			if (role == TrackedControllerRole_Invalid)
 				continue;
-			else if (role == vr::TrackedControllerRole_LeftHand)
+			else if (role == TrackedControllerRole_LeftHand)
 				printf(" LEFT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);	
-			else if (role == vr::TrackedControllerRole_RightHand)
+			else if (role == TrackedControllerRole_RightHand)
 				printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
 		}
 			
