@@ -259,19 +259,22 @@ void LighthouseTracking::ControllerCoords()
 
 		ControllerData controller = (controllers[i]);
 
-		if (!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId))
-		continue;
+		if (controllers[i].deviceId < 0 || 
+			!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId) || 
+			controllers[i].hand <= 0)
+			continue;
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controllers[i].deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
-	
 		position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-	
+		
+		char handString[6];
+
 	int role = controller.hand;
-	if (role == 0)
-		continue;
-	else if (role == 1)
-		printf(" LEFT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);	
-	else if (role == 2)
-		printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
+	if (controller.hand == 1)
+		sprintf(handString, "LEFT");
+	else if (controller.hand == 2)
+		sprintf(handString, "RIGHT");
+
+		printf(" %s x: %.3f y: %.3f z: %.3f", handString, position.v[0], position.v[1], position.v[2]);	
 	}
 }
