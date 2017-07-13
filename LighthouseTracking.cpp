@@ -65,7 +65,7 @@ bool LighthouseTracking::RunProcedure()
 		if (!ProcessVREvent(event)) 
 		{
 			// If ProcessVREvent determined that OpenVR quit, print quit message
-			printf("\n(OpenVR) service quit");
+			printf("\nEVENT--(OpenVR) service quit");
 			return false;
 		}
 	}
@@ -83,79 +83,79 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 	switch (event.eventType)
 	{
 		case VREvent_TrackedDeviceActivated:
-			 printf("\n(OpenVR) Device : %d attached", event.trackedDeviceIndex);
+			 printf("\nEVENT--(OpenVR) Device : %d attached", event.trackedDeviceIndex);
 		break;
 
 		case VREvent_TrackedDeviceDeactivated:
-			printf("\n(OpenVR) Device : %d detached", event.trackedDeviceIndex);
+			printf("\nEVENT--(OpenVR) Device : %d detached", event.trackedDeviceIndex);
 		break;
 
 		case VREvent_TrackedDeviceUpdated:
-			printf("\n(OpenVR) Device : %d updated", event.trackedDeviceIndex);
+			printf("\nEVENT--(OpenVR) Device : %d updated", event.trackedDeviceIndex);
 		break;
 
 		case VREvent_DashboardActivated:
-			printf("\n(OpenVR) Dashboard activated");
+			printf("\nEVENT--(OpenVR) Dashboard activated");
 		break;
 
 		case VREvent_DashboardDeactivated:
-			printf("\n(OpenVR) Dashboard deactivated");
+			printf("\nEVENT--(OpenVR) Dashboard deactivated");
 		break;
 
 		case VREvent_ChaperoneDataHasChanged:
-			printf("\n(OpenVR) Chaperone data has changed");
+			printf("\nEVENT--(OpenVR) Chaperone data has changed");
 		break;
 
 		case VREvent_ChaperoneSettingsHaveChanged:
-			printf("\n(OpenVR) Chaperone settings have changed");
+			printf("\nEVENT--(OpenVR) Chaperone settings have changed");
 		break;
 
 		case VREvent_ChaperoneUniverseHasChanged:
-			printf("\n(OpenVR) Chaperone universe has changed");
+			printf("\nEVENT--(OpenVR) Chaperone universe has changed");
 		break;
 
 		case VREvent_ApplicationTransitionStarted:
-			printf("\n(OpenVR) Application Transition: Transition has started");
+			printf("\nEVENT--(OpenVR) Application Transition: Transition has started");
 		break;
 
 		case VREvent_ApplicationTransitionNewAppStarted:
-			printf("\n(OpenVR) Application transition: New app has started");
+			printf("\nEVENT--(OpenVR) Application transition: New app has started");
 		break;
 
 		case VREvent_Quit:
 		{
-			printf("\n(OpenVR) Received SteamVR Quit (%d%s", VREvent_Quit, ")");
+			printf("\nEVENT--(OpenVR) Received SteamVR Quit (%d%s", VREvent_Quit, ")");
 			return false;
 		}
 		break;
 
 		case VREvent_ProcessQuit:
 		{
-			printf("\n(OpenVR) SteamVR Quit Process (%d%s", VREvent_ProcessQuit, ")");
+			printf("\nEVENT--(OpenVR) SteamVR Quit Process (%d%s", VREvent_ProcessQuit, ")");
 			return false;
 		}
 		break;
 
 		case VREvent_QuitAborted_UserPrompt:
 		{
-			printf("\n(OpenVR) SteamVR Quit Aborted UserPrompt (%d%s", VREvent_QuitAborted_UserPrompt, ")");
+			printf("\nEVENT--(OpenVR) SteamVR Quit Aborted UserPrompt (%d%s", VREvent_QuitAborted_UserPrompt, ")");
 			return false;
 		}
 		break;
 
 		case VREvent_QuitAcknowledged:
 		{
-			printf("\n(OpenVR) SteamVR Quit Acknowledged (%d%s", VREvent_QuitAcknowledged, ")");
+			printf("\nEVENT--(OpenVR) SteamVR Quit Acknowledged (%d%s", VREvent_QuitAcknowledged, ")");
 			return false;
 		}
 		break;
 
 		case VREvent_TrackedDeviceRoleChanged:
-			printf("\n(OpenVR) TrackedDeviceRoleChanged: %d", event.trackedDeviceIndex);
+			printf("\nEVENT--(OpenVR) TrackedDeviceRoleChanged: %d", event.trackedDeviceIndex);
 		break;
 
 		case VREvent_TrackedDeviceUserInteractionStarted:
-			printf("\n(OpenVR) TrackedDeviceUserInteractionStarted: %d", event.trackedDeviceIndex);
+			printf("\nEVENT--(OpenVR) TrackedDeviceUserInteractionStarted: %d", event.trackedDeviceIndex);
 		break;
 		
 		default:
@@ -165,11 +165,11 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 				{
 					ControllerData* pController = &(controllers[i]);
 					if(event.trackedDeviceIndex == pController->deviceId)
-						printf("\nBUTTON- index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
+						printf("\nBUTTON-E--index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
 				}
 			}
 			else
-				printf("\n(OpenVR) Event: %d", event.eventType);
+				printf("\nEVENT--(OpenVR) Event: %d", event.eventType);
 	}
 
 	return true;
@@ -196,12 +196,12 @@ void LighthouseTracking::iterateAssignIds()
 		if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD)
 		{
 			hmdDeviceId = i;
-			printf("\n-INFO: Assigned hmdDeviceId=%d",hmdDeviceId);
+			printf("\nSETID--Assigned hmdDeviceId=%d",hmdDeviceId);
 		}
 		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
 		{
 			int initIndex = controllerInitCount % 2;
-			ControllerData* pController = &(controllers[initIndex]);
+			ControllerData controller = (controllers[initIndex]);
 			int sHand = -1;
 
 			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(i);
@@ -211,11 +211,25 @@ void LighthouseTracking::iterateAssignIds()
 				sHand = 1;
 			else if (role == TrackedControllerRole_RightHand)
 				sHand = 2;
-			pController->hand = sHand;
-			pController->deviceId = i;
-			controllerInitCount++;
+			controller.hand = sHand;
+			controller.deviceId = i;
 
-			printf("\n-INFO: Assigned controllers[%d] .hand=%d .deviceId=%d",initIndex,sHand, i);
+
+
+			for(int x=0; x<k_unControllerStateAxisCount; x++ )
+            {
+                int prop = vr_pointer->GetInt32TrackedDeviceProperty(controller.deviceId, 
+                    (ETrackedDeviceProperty)(Prop_Axis0Type_Int32 + x));
+
+                if( prop==k_eControllerAxis_Trigger )
+                    controller.idtrigger = x;
+                else if( prop==k_eControllerAxis_TrackPad )
+                    controller.idpad = x;
+            }
+
+
+			controllerInitCount++;
+			printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , controller.idtrigger, controller.idpad);
 		}
 			
 	}
@@ -227,8 +241,11 @@ void LighthouseTracking::ParseTrackingFrame()
 		This for loop will iterate over all of the tracked devices.
 		* deviceId is the locaL variable holding the index.
 	*/
-
-	iterateAssignIds();
+	if(hmdDeviceId < 0 ||
+		controllers[0].deviceId < 0 ||
+		controllers[1].deviceId < 0 ||
+		controllers[0].deviceId == controllers[1].deviceId)
+		iterateAssignIds();
 
 	HMDCoords();
 	ControllerCoords();
@@ -241,7 +258,7 @@ void LighthouseTracking::HMDCoords()
 	TrackedDevicePose_t trackedDevicePose;
 	HmdVector3_t position;
 	if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
-			printf( "\nInput Focus by Another Process");
+			printf( "\nINFO--Input Focus by Another Process");
 
 	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1);
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
@@ -269,12 +286,15 @@ void LighthouseTracking::ControllerCoords()
 		
 		char handString[6];
 
-	int role = controller.hand;
-	if (controller.hand == 1)
-		sprintf(handString, "LEFT");
-	else if (controller.hand == 2)
-		sprintf(handString, "RIGHT");
+		if (controller.hand == 1)
+			sprintf(handString, "LEFT");
+		else if (controller.hand == 2)
+			sprintf(handString, "RIGHT");
 
 		printf(" %s x: %.3f y: %.3f z: %.3f", handString, position.v[0], position.v[1], position.v[2]);	
+
+		int t = controller.idtrigger;
+		int p = controller.idpad;
+		printf("BUTTON-S-- trigger=%f padx=%f pady=%f", controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
 	}
 }
