@@ -21,8 +21,8 @@ LighthouseTracking::LighthouseTracking()
 
 	/*
 	VR_Init (
-	  	arg1: Pointer to vr:EVRInitError type (I think its an enum)
-	  	arg2: Must be of type vr::EVRApplicationType
+	  	arg1: Pointer to EVRInitError type (I think its an enum)
+	  	arg2: Must be of type EVRApplicationType
 
 	  		The type of VR Applicaion.  This example uses the SteamVR instance that is already running.  
 	        Because of this, the init function will fail if SteamVR is not already running. 
@@ -49,54 +49,28 @@ LighthouseTracking::LighthouseTracking()
 
 	* Loop-listen for events then parses them (e.g. prints the to user)
 	* Returns true if success or false if openvr has quit
-	* Should be called by main.cpp with the bShouldWaitForEvents flag
+	* Should be called by main.cpp 
 */
-bool LighthouseTracking::RunProcedure(bool bShouldWaitForEvents) 
+bool LighthouseTracking::RunProcedure() 
 {
-
-	
-
-	// Either A) wait for events, such as hand controller button press, before parsing...
-	if (bShouldWaitForEvents) 
+	// Define a VREvent
+	VREvent_t event;
+	if(vr_pointer->PollNextEvent(&event, sizeof(event)))
 	{
-		// Define a VREvent
-		VREvent_t event;
-
-		/* 
-			{ vr::IVRSystem. , vr_pointer-> } PollNextEvent(
-
-				arg1: VREvent_t*  A pointer to a VREvent_t which will be filled
-				arg2: Size of the VREvent_t struct in bytes
-				
-				If there is an event, returns ture and fills the event pointer with the
-				next event.  If no event, returns false.
-
-				I think the function "hangs" until there is an event, because tracking
-				data has only been printed right after some event happens.
+		/*
+			ProcessVREvent is a function defined in this module.  It returns false if
+			the function determines the type of error to be fatal or signal some kind of quit.
 		*/
-
-		while (vr_pointer->PollNextEvent(&event, sizeof(event)))
+		if (!ProcessVREvent(event)) 
 		{
-			/*
-				ProcessVREvent is a function defined in this module.  It returns false if
-				the function determines the type of error to be fatal or signal some kind of quit.
-			*/
-			if (!ProcessVREvent(event)) 
-			{
-				// If ProcessVREvent determined that OpenVR quit, print quit message
-				printf("\n(OpenVR) service quit");
-				return false;
-			}
-			ParseTrackingFrame();
+			// If ProcessVREvent determined that OpenVR quit, print quit message
+			printf("\n(OpenVR) service quit");
+			return false;
 		}
 	}
-	// ... or B) continous parsint of tracking data irrespective of events
-	else 	
-		ParseTrackingFrame();
-	
+	ParseTrackingFrame();
 	return true;
 }
-
 /*
 	defined fuction ProcessVREvent()
 
@@ -237,9 +211,6 @@ void LighthouseTracking::ParseTrackingFrame()
 			vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 			position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
 			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(deviceId);
-
-			//printf("The mask for %s@'%d' is %d", "k_EButton_Grip", vr::EVRButtonId::k_EButton_Grip, vr::ButtonMaskFromId( vr::EVRButtonId::k_EButton_Grip ));
-
 			if (role == TrackedControllerRole_Invalid)
 				continue;
 			else if (role == TrackedControllerRole_LeftHand)

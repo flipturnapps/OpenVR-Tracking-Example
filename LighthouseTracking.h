@@ -18,7 +18,7 @@ private:
 public:
 	~LighthouseTracking();
 	LighthouseTracking();
-	bool RunProcedure(bool bWaitForEvents);
+	bool RunProcedure();
 	bool ProcessVREvent(const VREvent_t & event);
 	void ParseTrackingFrame();
 };
