@@ -3,6 +3,7 @@
 
 
 
+
 // Destructor
 LighthouseTracking::~LighthouseTracking() 
 {
@@ -158,8 +159,15 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 		break;
 		
 		default:
-			if (event.eventType >= 200 && event.eventType <= 203)
-				printf("\n(OpenVR) ButtonEvent#: %d", event.eventType);
+			if (event.eventType >= 200 && event.eventType <= 201)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					ControllerData* pController = &(controllers[i]);
+					if(event.trackedDeviceIndex == pController->deviceId)
+						printf("\nBUTTON- index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
+				}
+			}
 			else
 				printf("\n(OpenVR) Event: %d", event.eventType);
 	}
@@ -178,46 +186,92 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 	return vector;
 }
 
+void LighthouseTracking::iterateAssignIds()
+{
+	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)
+	{
+		if (!vr_pointer->IsTrackedDeviceConnected(i))
+			continue;
+		ETrackedDeviceClass trackedDeviceClass = vr_pointer->GetTrackedDeviceClass(i);
+		if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD)
+		{
+			hmdDeviceId = i;
+			printf("\n-INFO: Assigned hmdDeviceId=%d",hmdDeviceId);
+		}
+		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
+		{
+			int initIndex = controllerInitCount % 2;
+			ControllerData* pController = &(controllers[initIndex]);
+			int sHand = -1;
+
+			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(i);
+			if (role == TrackedControllerRole_Invalid)
+				sHand = 0;
+			else if (role == TrackedControllerRole_LeftHand)
+				sHand = 1;
+			else if (role == TrackedControllerRole_RightHand)
+				sHand = 2;
+			pController->hand = sHand;
+			pController->deviceId = i;
+			controllerInitCount++;
+
+			printf("\n-INFO: Assigned controllers[%d] .hand=%d .deviceId=%d",initIndex,sHand, i);
+		}
+			
+	}
+}
+
 void LighthouseTracking::ParseTrackingFrame() 
 {
 	/*
 		This for loop will iterate over all of the tracked devices.
 		* deviceId is the locaL variable holding the index.
 	*/
-	for (unsigned int deviceId; deviceId < k_unMaxTrackedDeviceCount; deviceId++)
-	{
-	
-		// if not connected just skip the rest of the routine
-		if (!vr_pointer->IsTrackedDeviceConnected(deviceId))
-			continue;
 
-		TrackedDevicePose_t trackedDevicePose;
-		VRControllerState_t controllerState;
-		HmdVector3_t position;
+	iterateAssignIds();
 
-		if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
+	HMDCoords();
+	ControllerCoords();
+}
+
+void LighthouseTracking::HMDCoords()
+{
+	if (!vr_pointer->IsTrackedDeviceConnected(hmdDeviceId))
+		return;
+	TrackedDevicePose_t trackedDevicePose;
+	HmdVector3_t position;
+	if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
 			printf( "\nInput Focus by Another Process");
 
-		// Get what type of device it is and work with its data
-		ETrackedDeviceClass trackedDeviceClass = vr_pointer->GetTrackedDeviceClass(deviceId);
-		if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD)
-		{
-			vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1);
-			position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
-			printf("\nCOORDS-- HMD x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
-		}
-		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
-		{
-			vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
-			position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(deviceId);
-			if (role == TrackedControllerRole_Invalid)
-				continue;
-			else if (role == TrackedControllerRole_LeftHand)
-				printf(" LEFT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);	
-			else if (role == TrackedControllerRole_RightHand)
-				printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
-		}
-			
+	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1);
+	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
+	printf("\nCOORDS-- HMD x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
+}
+
+void LighthouseTracking::ControllerCoords()
+{
+	TrackedDevicePose_t trackedDevicePose;
+	VRControllerState_t controllerState;
+	HmdVector3_t position;
+
+	for(int i = 0; i < 2; i++)
+	{
+
+		ControllerData controller = (controllers[i]);
+
+		if (!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId))
+		continue;
+
+		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controllers[i].deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
+	
+		position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
+	
+	int role = controller.hand;
+	if (role == 0)
+		continue;
+	else if (role == 1)
+		printf(" LEFT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);	
+	else if (role == 2)
+		printf(" RIGHT x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
 	}
 }

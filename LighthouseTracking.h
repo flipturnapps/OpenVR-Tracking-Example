@@ -9,7 +9,8 @@
 using namespace vr;
 
 
-class LighthouseTracking {
+class LighthouseTracking 
+{
 private:
 	IVRSystem *vr_pointer = NULL;
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
@@ -21,6 +22,21 @@ public:
 	bool RunProcedure();
 	bool ProcessVREvent(const VREvent_t & event);
 	void ParseTrackingFrame();
+	void iterateAssignIds();
+	void HMDCoords();
+	void ControllerCoords();
+
+	struct _ControllerData
+	{
+   		int deviceId = -1;
+    	int hand = -1;    
+	};
+	typedef struct _ControllerData ControllerData;
+
+	ControllerData controllers[2];
+
+	int hmdDeviceId = -1;
+	int controllerInitCount = 0;
 };
 
 #endif
