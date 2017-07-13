@@ -29,7 +29,9 @@ public:
 	struct _ControllerData
 	{
    		int deviceId = -1;
-    	int hand = -1;    
+    	int hand = -1; 
+    	int idtrigger = -1;
+    	int idpad = -1;
 	};
 	typedef struct _ControllerData ControllerData;
 
