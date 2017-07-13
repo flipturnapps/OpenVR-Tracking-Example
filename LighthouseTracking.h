@@ -6,17 +6,20 @@
 #include <stdio.h>
 #include <iostream>
 
+using namespace vr;
+
+
 class LighthouseTracking {
 private:
-	vr::IVRSystem *vr_pointer = NULL;
-	vr::HmdVector3_t GetPosition(vr::HmdMatrix34_t matrix);
+	IVRSystem *vr_pointer = NULL;
+	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
 	bool bWaitForEventsBeforeParsing = false;
 
 public:
 	~LighthouseTracking();
 	LighthouseTracking();
 	bool RunProcedure(bool bWaitForEvents);
-	bool ProcessVREvent(const vr::VREvent_t & event);
+	bool ProcessVREvent(const VREvent_t & event);
 	void ParseTrackingFrame();
 };
 

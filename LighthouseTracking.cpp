@@ -1,7 +1,6 @@
 #include "LighthouseTracking.h"
 #include <stdio.h>
 
-using namespace vr;
 
 
 // Destructor
