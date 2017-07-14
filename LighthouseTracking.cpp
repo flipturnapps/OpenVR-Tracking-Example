@@ -276,10 +276,10 @@ void LighthouseTracking::ControllerCoords()
 
 		ControllerData controller = (controllers[i]);
 
-		if (controllers[i].deviceId < 0 || 
-			!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId) || 
-			controllers[i].hand <= 0)
-			continue;
+		//if (controllers[i].deviceId < 0 || 
+		//	!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId) || 
+		//	controllers[i].hand <= 0)
+		//	continue;
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controllers[i].deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
