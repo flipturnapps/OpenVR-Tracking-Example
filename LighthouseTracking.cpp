@@ -201,7 +201,7 @@ void LighthouseTracking::iterateAssignIds()
 		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
 		{
 			int initIndex = controllerInitCount % 2;
-			ControllerData controller = (controllers[initIndex]);
+			ControllerData* pController = &(controllers[initIndex]);
 			int sHand = -1;
 
 			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(i);
@@ -211,25 +211,25 @@ void LighthouseTracking::iterateAssignIds()
 				sHand = 1;
 			else if (role == TrackedControllerRole_RightHand)
 				sHand = 2;
-			controller.hand = sHand;
-			controller.deviceId = i;
+			pController->hand = sHand;
+			pController->deviceId = i;
 
 
 
 			for(int x=0; x<k_unControllerStateAxisCount; x++ )
             {
-                int prop = vr_pointer->GetInt32TrackedDeviceProperty(controller.deviceId, 
+                int prop = vr_pointer->GetInt32TrackedDeviceProperty(pController->deviceId, 
                     (ETrackedDeviceProperty)(Prop_Axis0Type_Int32 + x));
 
                 if( prop==k_eControllerAxis_Trigger )
-                    controller.idtrigger = x;
+                    pController->idtrigger = x;
                 else if( prop==k_eControllerAxis_TrackPad )
-                    controller.idpad = x;
+                    pController->idpad = x;
             }
 
 
 			controllerInitCount++;
-			printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , controller.idtrigger, controller.idpad);
+			printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , pController->idtrigger, (*pController).idpad);
 		}
 			
 	}
@@ -271,15 +271,20 @@ void LighthouseTracking::ControllerCoords()
 	VRControllerState_t controllerState;
 	HmdVector3_t position;
 
+	char* bufs[2];
+	char lBs[100];
+	char rBs[100];
+	bufs[0] = lBs;
+	bufs[1] = rBs;
 	for(int i = 0; i < 2; i++)
 	{
 
 		ControllerData controller = (controllers[i]);
 
-		//if (controllers[i].deviceId < 0 || 
-		//	!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId) || 
-		//	controllers[i].hand <= 0)
-		//	continue;
+		if (controllers[i].deviceId < 0 || 
+			!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId) || 
+			controllers[i].hand <= 0)
+			continue;
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controllers[i].deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
@@ -295,6 +300,10 @@ void LighthouseTracking::ControllerCoords()
 
 		int t = controller.idtrigger;
 		int p = controller.idpad;
-		printf("BUTTON-S-- trigger=%f padx=%f pady=%f", controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
+		
+
+		sprintf(bufs[i],"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
 	}
+	printf("\nBUTTON-S-- %s",bufs[0]);
+	printf("  %s",bufs[1]);
 }
