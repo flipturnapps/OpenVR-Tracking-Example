@@ -39,6 +39,7 @@ public:
 
 	int hmdDeviceId = -1;
 	int controllerInitCount = 0;
+	int initPassCount = 0;
 };
 
 #endif

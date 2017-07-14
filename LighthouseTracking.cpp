@@ -188,6 +188,7 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 
 void LighthouseTracking::iterateAssignIds()
 {
+	initPassCount = 0;
 	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)
 	{
 		if (!vr_pointer->IsTrackedDeviceConnected(i))
@@ -246,8 +247,11 @@ void LighthouseTracking::ParseTrackingFrame()
 		controllers[0].deviceId < 0 ||
 		controllers[1].deviceId < 0 ||
 		controllers[0].deviceId == controllers[1].deviceId || 
-		controllers[0].hand == controllers[1].hand)
+		controllers[0].hand == controllers[1].hand ||
+		initPassCount > 10000)
 		iterateAssignIds();
+	else
+		initPassCount++;
 
 	HMDCoords();
 	ControllerCoords();
@@ -302,7 +306,6 @@ void LighthouseTracking::ControllerCoords()
 
 		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
 		bufs[i] = buf;
-		//printf("%d",i);
 	}
 	printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
 	printf("  %s",( (bufs[1]) ) );
