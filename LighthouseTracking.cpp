@@ -170,12 +170,56 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 
 void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 {
+	int controllerIndex;
 	for (int i = 0; i < 2; i++)
 	{
 		ControllerData* pController = &(controllers[i]);
 		if(event.trackedDeviceIndex == pController->deviceId)
 			printf("\nBUTTON-E--index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
+		if(pController->deviceId == event.trackedDeviceIndex)
+			controllerIndex = i;
 	}
+	ControllerData* pC = &(controllers[controllerIndex]);
+	ButtonData* pBD;
+	//printf("\nz");
+	switch( event.data.controller.button )
+            {
+            case k_EButton_ApplicationMenu:
+              	pBD = &(pC->b_AppMenu);
+                break;
+
+            case k_EButton_Grip:
+                pBD = &(pC->b_Grip);
+                break;
+
+            case k_EButton_SteamVR_Trigger:
+                pBD = &(pC->b_Trigger);
+                
+               // printf("\zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+                break;
+
+            case k_EButton_SteamVR_Touchpad:
+                pBD = &(pC->b_Pad);
+                break;
+            }
+    switch(event.eventType)
+            {
+            case VREvent_ButtonPress:
+               	pBD->pressed = true;
+                break;
+
+            case VREvent_ButtonUnpress:
+                pBD->pressed = false;
+                break;
+
+            case VREvent_ButtonTouch:
+                pBD->touched = true;
+                break;
+
+            case VREvent_ButtonUntouch:
+                pBD->touched = false;
+                break;
+            }
 }
 
 HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix) 
@@ -278,7 +322,7 @@ void LighthouseTracking::ControllerCoords()
 {
 	TrackedDevicePose_t trackedDevicePose;
 	VRControllerState_t controllerState;
-	HmdVector3_t position;
+	HmdVector3_t* positions = new HmdVector3_t[2];
 
 	char** bufs = new char*[2];
 	bool* isOk = new bool[2];
@@ -294,7 +338,7 @@ void LighthouseTracking::ControllerCoords()
 			continue;
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controllers[i].deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
-		position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
+		positions[i] = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
 		
 		char handString[6];
 
@@ -303,11 +347,10 @@ void LighthouseTracking::ControllerCoords()
 		else if (controller.hand == 2)
 			sprintf(handString, "RIGHT");
 
-		printf(" %s x: %.3f y: %.3f z: %.3f", handString, position.v[0], position.v[1], position.v[2]);	
+		printf(" %s x: %.3f y: %.3f z: %.3f", handString, positions[i].v[0], positions[i].v[1], positions[i].v[2]);	
 
 		int t = controller.idtrigger;
 		int p = controller.idpad;
-		
 
 		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
 		bufs[i] = buf;
@@ -316,10 +359,25 @@ void LighthouseTracking::ControllerCoords()
 	
 	if(isOk[0] == true)
 	{
-		
-	printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
-	if(isOk[1] == true)
-	printf("  %s",( (bufs[1]) ) );
-}
+		printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
+		if(isOk[1] == true)
+		{
+			printf("  %s",( (bufs[1]) ) );
+		}
+	}
+
+	float sum = 0;
+	for (int i = 0; i < 3; i++)
+			{
+				float delta = positions[1].v[i] - positions[0].v[i];
+				delta = delta * delta;
+				sum = sum + delta;
+			}
+
+			if (sum < 1)
+			{
+				vr_pointer->TriggerHapticPulse(controllers[0].deviceId,controllers[0].idpad,2000);
+				vr_pointer->TriggerHapticPulse(controllers[1].deviceId,controllers[1].idpad,2000);
+			}
 
 }

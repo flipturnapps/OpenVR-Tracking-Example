@@ -27,12 +27,24 @@ public:
 	void ControllerCoords();
 	void dealWithButtonEvent(VREvent_t);
 
+	struct _ButtonData
+	{
+		bool pressed = false;
+		bool touched = false;
+	};
+	typedef struct _ButtonData ButtonData;
+
 	struct _ControllerData
 	{
    		int deviceId = -1;
     	int hand = -1; 
     	int idtrigger = -1;
     	int idpad = -1;
+
+    	ButtonData b_AppMenu;
+    	ButtonData b_Trigger;
+    	ButtonData b_Grip;
+    	ButtonData b_Pad;
 	};
 	typedef struct _ControllerData ControllerData;
 

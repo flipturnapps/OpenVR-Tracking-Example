@@ -36,8 +36,11 @@ int main()
 	if (lighthouseTracking) //null check
 	{
 		cpSleep(2000);
-		while (lighthouseTracking->RunProcedure())
+		while (1==1)
+		{
+			lighthouseTracking->RunProcedure();
 			cpSleep(1);
+		}
 		delete lighthouseTracking;
 	}
 	return EXIT_SUCCESS;
