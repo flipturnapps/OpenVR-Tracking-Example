@@ -241,10 +241,12 @@ void LighthouseTracking::ParseTrackingFrame()
 		This for loop will iterate over all of the tracked devices.
 		* deviceId is the locaL variable holding the index.
 	*/
+
 	if(hmdDeviceId < 0 ||
 		controllers[0].deviceId < 0 ||
 		controllers[1].deviceId < 0 ||
-		controllers[0].deviceId == controllers[1].deviceId)
+		controllers[0].deviceId == controllers[1].deviceId || 
+		controllers[0].hand == controllers[1].hand)
 		iterateAssignIds();
 
 	HMDCoords();
@@ -271,14 +273,10 @@ void LighthouseTracking::ControllerCoords()
 	VRControllerState_t controllerState;
 	HmdVector3_t position;
 
-	char* bufs[2];
-	char lBs[100];
-	char rBs[100];
-	bufs[0] = lBs;
-	bufs[1] = rBs;
+	char** bufs = new char*[2];
 	for(int i = 0; i < 2; i++)
 	{
-
+		char* buf = new char[100];
 		ControllerData controller = (controllers[i]);
 
 		if (controllers[i].deviceId < 0 || 
@@ -302,8 +300,10 @@ void LighthouseTracking::ControllerCoords()
 		int p = controller.idpad;
 		
 
-		sprintf(bufs[i],"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
+		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
+		bufs[i] = buf;
+		//printf("%d",i);
 	}
-	printf("\nBUTTON-S-- %s",bufs[0]);
-	printf("  %s",bufs[1]);
+	printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
+	printf("  %s",( (bufs[1]) ) );
 }
