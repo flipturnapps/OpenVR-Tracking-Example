@@ -25,6 +25,7 @@ public:
 	void iterateAssignIds();
 	void HMDCoords();
 	void ControllerCoords();
+	void dealWithButtonEvent(VREvent_t);
 
 	struct _ControllerData
 	{

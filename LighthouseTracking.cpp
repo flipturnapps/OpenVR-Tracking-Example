@@ -159,20 +159,23 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 		break;
 		
 		default:
-			if (event.eventType >= 200 && event.eventType <= 201)
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					ControllerData* pController = &(controllers[i]);
-					if(event.trackedDeviceIndex == pController->deviceId)
-						printf("\nBUTTON-E--index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
-				}
-			}
+			if (event.eventType >= 200 && event.eventType <= 203)
+				dealWithButtonEvent(event);
 			else
 				printf("\nEVENT--(OpenVR) Event: %d", event.eventType);
 	}
 
 	return true;
+}
+
+void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
+{
+	for (int i = 0; i < 2; i++)
+	{
+		ControllerData* pController = &(controllers[i]);
+		if(event.trackedDeviceIndex == pController->deviceId)
+			printf("\nBUTTON-E--index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
+	}
 }
 
 HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix) 
@@ -248,7 +251,7 @@ void LighthouseTracking::ParseTrackingFrame()
 		controllers[1].deviceId < 0 ||
 		controllers[0].deviceId == controllers[1].deviceId || 
 		controllers[0].hand == controllers[1].hand ||
-		initPassCount > 10000)
+		initPassCount > 5000)
 		iterateAssignIds();
 	else
 		initPassCount++;
@@ -278,8 +281,10 @@ void LighthouseTracking::ControllerCoords()
 	HmdVector3_t position;
 
 	char** bufs = new char*[2];
+	bool* isOk = new bool[2];
 	for(int i = 0; i < 2; i++)
 	{
+		isOk[i] = false;
 		char* buf = new char[100];
 		ControllerData controller = (controllers[i]);
 
@@ -306,7 +311,15 @@ void LighthouseTracking::ControllerCoords()
 
 		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
 		bufs[i] = buf;
+		isOk[i] = true;
 	}
+	
+	if(isOk[0] == true)
+	{
+		
 	printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
+	if(isOk[1] == true)
 	printf("  %s",( (bufs[1]) ) );
+}
+
 }
