@@ -43,6 +43,12 @@ LighthouseTracking::LighthouseTracking()
 		printf("Unable to init VR runtime: %s \n", VR_GetVRInitErrorAsEnglishDescription(eError));
 		exit(EXIT_FAILURE);
 	}
+
+	bounds = new float*[2];
+	for(int i = 0; i < 2; i++)
+	{
+		bounds[i] = new float[3];
+	}
 }
 
 /*
@@ -194,8 +200,6 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 
             case k_EButton_SteamVR_Trigger:
                 pBD = &(pC->b_Trigger);
-                
-               // printf("\zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
                 break;
 
             case k_EButton_SteamVR_Touchpad:
@@ -206,10 +210,19 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
             {
             case VREvent_ButtonPress:
                	pBD->pressed = true;
+               	for(int i = 0; i < 3; i++)
+               	{
+               		bounds[0][i] = positions[controllerIndex].v[i];
+               	}
                 break;
 
             case VREvent_ButtonUnpress:
                 pBD->pressed = false;
+                for(int i = 0; i < 3; i++)
+               	{
+               		bounds[1][i] = positions[controllerIndex].v[i];
+               	}
+               	printf("\nBOUNDS %f %f | %f %f | %f %f", bounds[0][0],bounds[1][0],bounds[0][1],bounds[1][1],bounds[0][2],bounds[1][2] );
                 break;
 
             case VREvent_ButtonTouch:
@@ -322,7 +335,7 @@ void LighthouseTracking::ControllerCoords()
 {
 	TrackedDevicePose_t trackedDevicePose;
 	VRControllerState_t controllerState;
-	HmdVector3_t* positions = new HmdVector3_t[2];
+	positions = new HmdVector3_t[2];
 
 	char** bufs = new char*[2];
 	bool* isOk = new bool[2];
@@ -365,7 +378,7 @@ void LighthouseTracking::ControllerCoords()
 			printf("  %s",( (bufs[1]) ) );
 		}
 	}
-
+	/*
 	float sum = 0;
 	for (int i = 0; i < 3; i++)
 			{
@@ -379,5 +392,28 @@ void LighthouseTracking::ControllerCoords()
 				vr_pointer->TriggerHapticPulse(controllers[0].deviceId,controllers[0].idpad,2000);
 				vr_pointer->TriggerHapticPulse(controllers[1].deviceId,controllers[1].idpad,2000);
 			}
+
+			*/
+			
+			for (int c = 0; c < 2; c++)
+			{
+				bool good = true;
+			for (int i = 0; i < 3; i++)
+			{
+				if(i == 1)
+					continue;
+				float bMax = std::max(bounds[0][i],bounds[1][i]);
+				float bMin = std::min(bounds[1][i],bounds[0][i]);
+				if(bMin > positions[c].v[i] || bMax < positions[c].v[i])
+				{
+					good = false;
+					break;
+				}
+			}
+			if(good)
+				vr_pointer->TriggerHapticPulse(controllers[c].deviceId,controllers[c].idpad,400);
+		}
+			
+			
 
 }

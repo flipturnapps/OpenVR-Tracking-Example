@@ -53,6 +53,8 @@ public:
 	int hmdDeviceId = -1;
 	int controllerInitCount = 0;
 	int initPassCount = 0;
+	HmdVector3_t* positions;
+	float** bounds;
 };
 
 #endif
