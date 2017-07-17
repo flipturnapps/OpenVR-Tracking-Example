@@ -5,7 +5,7 @@
 #include <headers/openvr.h>
 #include <stdio.h>
 #include <iostream>
-
+#include "cylinder.h"
 using namespace vr;
 
 
@@ -57,7 +57,7 @@ public:
 	int controllerInitCount = 0;
 	int initPassCount = 0;
 	
-	Cylinder cylinder;
+	Cylinder* cylinder;
 };
 
 #endif

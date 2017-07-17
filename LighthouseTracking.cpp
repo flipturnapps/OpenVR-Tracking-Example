@@ -1,6 +1,6 @@
 #include "LighthouseTracking.h"
 #include <stdio.h>
-
+#include "cylinder.h"
 
 
 
@@ -207,15 +207,15 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
             {
             case VREvent_ButtonPress:
                	pBD->pressed = true;
-               	cylinder.x1 = pC->pos.v[0];
-               	cylinder.z1 = pC->pos.v[2];
+               	cylinder->x1 = pC->pos.v[0];
+               	cylinder->z1 = pC->pos.v[2];
                 break;
 
             case VREvent_ButtonUnpress:
                 pBD->pressed = false;
-              	cylinder.x2 = pC->pos.v[0];
-               	cylinder.z2 = pC->pos.v[2];
-           		cylinder.init();
+              	cylinder->x2 = pC->pos.v[0];
+               	cylinder->z2 = pC->pos.v[2];
+           		cylinder->init();
                 break;
 
             case VREvent_ButtonTouch:
@@ -389,9 +389,9 @@ void LighthouseTracking::ControllerCoords()
 			
 			for (int i = 0; i < 2; i++)
 			{
-				Controller c = controllers[i];
-				if(cylinder.isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2])
-					vr_pointer->TriggerHapticPulse(controllers[c].deviceId,controllers[c].idpad,400);
+				ControllerData c = controllers[i];
+				if(cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
+					vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
 			}
 			
 			

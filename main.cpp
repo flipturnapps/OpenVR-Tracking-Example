@@ -32,7 +32,7 @@ void cpSleep(int sleepMs)
 int main()
 {
 	// Create a new LighthouseTracking instance and parse as needed
-	LighthouseTracking *lighthouseTracking = new LighthouseTracking();
+	LighthouseTracking* lighthouseTracking = new LighthouseTracking();
 	if (lighthouseTracking) //null check
 	{
 		cpSleep(2000);
