@@ -21,7 +21,7 @@ public:
 	float zOrigin;
 	float yMin;
 	float yMax;
-	float radiusSquared;
+	float radius;
 
 	bool hasInit;
 };

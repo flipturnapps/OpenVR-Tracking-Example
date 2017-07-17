@@ -3,6 +3,23 @@
 #include "cylinder.h"
 
 
+#if !defined(_WIN32) && !defined(_WIN64) && !defined(__CYGWIN__) 
+    #  include <sys/time.h>
+    typedef timeval sys_time_t;
+    inline void system_time(sys_time_t* t) {
+        gettimeofday(t, NULL);
+    }
+    inline long long time_to_msec(const sys_time_t& t) {
+        return t.tv_sec * 1000LL + t.tv_usec / 1000;
+    }
+    #else // Windows and MinGW
+    #  include <sys/timeb.h>
+    typedef _timeb sys_time_t;
+    inline void system_time(sys_time_t* t) { _ftime(t); }
+    inline long long time_to_msec(const sys_time_t& t) {
+        return t.time * 1000LL + t.millitm;
+    }
+#endif
 
 // Destructor
 LighthouseTracking::~LighthouseTracking() 
@@ -171,6 +188,7 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 	return true;
 }
 
+
 //This method deals exclusively with button events
 void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 {
@@ -186,25 +204,14 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 
 	ControllerData* pC = &(controllers[controllerIndex]);
 	
+	if (event.data.controller.button == k_EButton_Grip && event.eventType == VREvent_ButtonUnpress)
+		inCylinderMode = !inCylinderMode;
+	if(inCylinderMode)
 	switch( event.data.controller.button )
 	{
+		
+
 		case k_EButton_ApplicationMenu:
-		switch(event.eventType)
-		{
-			case VREvent_ButtonPress:
-			cylinder->s1[0] = pC->pos.v[0];
-			cylinder->s1[2] = pC->pos.v[2];
-			break;
-
-			case VREvent_ButtonUnpress:
-			cylinder->s2[0] = pC->pos.v[0];
-			cylinder->s2[2] = pC->pos.v[2];
-			cylinder->init();
-			break;
-		}
-		break;
-
-		case k_EButton_Grip:
 		switch(event.eventType)
 		{
 			case VREvent_ButtonPress:
@@ -238,24 +245,7 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		
 		break;
 	}
-	switch(event.eventType)
-	{
-		case VREvent_ButtonPress:
-		
-		break;
-
-		case VREvent_ButtonUnpress:
-		
-		break;
-
-		case VREvent_ButtonTouch:
-		
-		break;
-
-		case VREvent_ButtonUntouch:
-		
-		break;
-	}
+	
 }
 
 HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix) 
@@ -407,30 +397,16 @@ void LighthouseTracking::ControllerCoords()
 			printf("  %s",( (bufs[1]) ) );
 		}
 	}
-	/*
-	float sum = 0;
-	for (int i = 0; i < 3; i++)
-			{
-				float delta = positions[1].v[i] - positions[0].v[i];
-				delta = delta * delta;
-				sum = sum + delta;
-			}
 
-			if (sum < 1)
-			{
-				vr_pointer->TriggerHapticPulse(controllers[0].deviceId,controllers[0].idpad,2000);
-				vr_pointer->TriggerHapticPulse(controllers[1].deviceId,controllers[1].idpad,2000);
-			}
+	for (int i = 0; i < 2; i++)
+	{
+		ControllerData c = controllers[i];
+		if(cylinder->hasInit && cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
+			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
+	}		
 
-			*/
-			
-			for (int i = 0; i < 2; i++)
-			{
-				ControllerData c = controllers[i];
-				if(cylinder->hasInit && cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
-					vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
-			}
-			
-			
-
+	sys_time_t t;
+    system_time(&t);
+    long long currentTimeMs = time_to_msec(t);
+    printf("\n%lld",currentTimeMs);
 }

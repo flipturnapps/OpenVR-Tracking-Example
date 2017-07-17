@@ -22,11 +22,12 @@ void Cylinder::init()
 	zOrigin = (s1[2] + s2[2])/2;
 	float deltaX = s1[0]-s2[0];
 	float deltaZ = s1[2]-s2[2];
-	radiusSquared = (deltaX*deltaX) + (deltaZ*deltaZ);
+	radius= std::sqrt((deltaX*deltaX) + (deltaZ*deltaZ));
 	yMax = std::max(s1[1],s2[1]);
 	yMin = std::min(s1[1],s2[1]);
 	hasInit = true;
 }
+
 
 bool Cylinder::isInside(float x, float y, float z)
 {
@@ -34,6 +35,6 @@ bool Cylinder::isInside(float x, float y, float z)
 		return false;
 	float dX = x-xOrigin;
 	float dZ = z-zOrigin;
-	float testDist = (dX*dX) + (dZ*dZ);
-	return (testDist <= radiusSquared);
+	float testDist = std::sqrt(((dX*dX) + (dZ*dZ)));
+	return (testDist <= radius);
 }

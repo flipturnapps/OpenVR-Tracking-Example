@@ -46,6 +46,9 @@ public:
 	int initPassCount = 0;
 	
 	Cylinder* cylinder;
+
+	bool inCylinderMode = false;
+	int cylinderIndex = 0;
 };
 
 #endif
