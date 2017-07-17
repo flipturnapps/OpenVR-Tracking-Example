@@ -1,6 +1,5 @@
 #include "LighthouseTracking.h"
 #include <stdio.h>
-#include "cylinder.h"
 
 
 
@@ -43,8 +42,6 @@ LighthouseTracking::LighthouseTracking()
 		printf("Unable to init VR runtime: %s \n", VR_GetVRInitErrorAsEnglishDescription(eError));
 		exit(EXIT_FAILURE);
 	}
-
-	cylinder = new Cylinder();
 }
 
 /*
@@ -206,16 +203,11 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
     switch(event.eventType)
             {
             case VREvent_ButtonPress:
-               	pBD->pressed = true;
-               	cylinder->x1 = pC->pos.v[0];
-               	cylinder->z1 = pC->pos.v[2];
+               	pBD->pressed = true;           
                 break;
 
             case VREvent_ButtonUnpress:
-                pBD->pressed = false;
-              	cylinder->x2 = pC->pos.v[0];
-               	cylinder->z2 = pC->pos.v[2];
-           		cylinder->init();
+                pBD->pressed = false;         
                 break;
 
             case VREvent_ButtonTouch:
@@ -370,30 +362,5 @@ void LighthouseTracking::ControllerCoords()
 			printf("  %s",( (bufs[1]) ) );
 		}
 	}
-	/*
-	float sum = 0;
-	for (int i = 0; i < 3; i++)
-			{
-				float delta = positions[1].v[i] - positions[0].v[i];
-				delta = delta * delta;
-				sum = sum + delta;
-			}
-
-			if (sum < 1)
-			{
-				vr_pointer->TriggerHapticPulse(controllers[0].deviceId,controllers[0].idpad,2000);
-				vr_pointer->TriggerHapticPulse(controllers[1].deviceId,controllers[1].idpad,2000);
-			}
-
-			*/
-			
-			for (int i = 0; i < 2; i++)
-			{
-				ControllerData c = controllers[i];
-				if(cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
-					vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
-			}
-			
-			
-
+	
 }
