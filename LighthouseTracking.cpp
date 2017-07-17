@@ -71,6 +71,7 @@ bool LighthouseTracking::RunProcedure()
 	ParseTrackingFrame();
 	return true;
 }
+
 /*
 	defined fuction ProcessVREvent()
 
@@ -167,13 +168,14 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 	return true;
 }
 
+//This method deals exclusively with button events
 void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 {
 	int controllerIndex;
 	for (int i = 0; i < 2; i++)
 	{
 		ControllerData* pController = &(controllers[i]);
-		if(event.trackedDeviceIndex == pController->deviceId)
+		if(event.trackedDeviceIndex == pController->deviceId) //prints the event data to the terminal
 			printf("\nBUTTON-E--index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
 		if(pController->deviceId == event.trackedDeviceIndex)
 			controllerIndex = i;
@@ -181,7 +183,6 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 	ControllerData* pC = &(controllers[controllerIndex]);
 	ButtonData* pBD;
 	
-
 	switch( event.data.controller.button )
             {
             case k_EButton_ApplicationMenu:
@@ -231,14 +232,20 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 	return vector;
 }
 
+//This method iterates across the maximum number of devices that can be attatched to the SteamVR system
+// and finds which ids correlate to the HMD and controllers;
 void LighthouseTracking::iterateAssignIds()
 {
 	initPassCount = 0;
 	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)
 	{
 		if (!vr_pointer->IsTrackedDeviceConnected(i))
-			continue;
+			continue; //Doesn't use the id if the device isn't connected
+
+
 		ETrackedDeviceClass trackedDeviceClass = vr_pointer->GetTrackedDeviceClass(i);
+
+		//Finding the type of device
 		if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_HMD)
 		{
 			hmdDeviceId = i;
@@ -288,6 +295,7 @@ void LighthouseTracking::ParseTrackingFrame()
 		* deviceId is the locaL variable holding the index.
 	*/
 
+	//Runs the iterateAssignIds() method if not every device has an id, or if it has been 5000 iterations
 	if(hmdDeviceId < 0 ||
 		controllers[0].deviceId < 0 ||
 		controllers[1].deviceId < 0 ||
