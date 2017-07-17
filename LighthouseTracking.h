@@ -16,6 +16,7 @@ private:
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
 	bool bWaitForEventsBeforeParsing = false;
 
+
 public:
 	~LighthouseTracking();
 	LighthouseTracking();
@@ -55,7 +56,8 @@ public:
 	int hmdDeviceId = -1;
 	int controllerInitCount = 0;
 	int initPassCount = 0;
-	float** bounds;
+	
+	Cylinder cylinder;
 };
 
 #endif

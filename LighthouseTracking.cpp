@@ -44,11 +44,7 @@ LighthouseTracking::LighthouseTracking()
 		exit(EXIT_FAILURE);
 	}
 
-	bounds = new float*[2];
-	for(int i = 0; i < 2; i++)
-	{
-		bounds[i] = new float[3];
-	}
+	cylinder = new Cylinder();
 }
 
 /*
@@ -187,7 +183,8 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 	}
 	ControllerData* pC = &(controllers[controllerIndex]);
 	ButtonData* pBD;
-	//printf("\nz");
+	
+
 	switch( event.data.controller.button )
             {
             case k_EButton_ApplicationMenu:
@@ -210,19 +207,15 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
             {
             case VREvent_ButtonPress:
                	pBD->pressed = true;
-               	for(int i = 0; i < 3; i++)
-               	{
-               		bounds[0][i] = pC->pos.v[i];
-               	}
+               	cylinder.x1 = pC->pos.v[0];
+               	cylinder.z1 = pC->pos.v[2];
                 break;
 
             case VREvent_ButtonUnpress:
                 pBD->pressed = false;
-                for(int i = 0; i < 3; i++)
-               	{
-               		bounds[1][i] = pC->pos.v[i];
-               	}
-               	printf("\nBOUNDS %f %f | %f %f | %f %f", bounds[0][0],bounds[1][0],bounds[0][1],bounds[1][1],bounds[0][2],bounds[1][2] );
+              	cylinder.x2 = pC->pos.v[0];
+               	cylinder.z2 = pC->pos.v[2];
+           		cylinder.init();
                 break;
 
             case VREvent_ButtonTouch:
@@ -394,24 +387,12 @@ void LighthouseTracking::ControllerCoords()
 
 			*/
 			
-			for (int c = 0; c < 2; c++)
+			for (int i = 0; i < 2; i++)
 			{
-				bool good = true;
-			for (int i = 0; i < 3; i++)
-			{
-				if(i == 1)
-					continue;
-				float bMax = std::max(bounds[0][i],bounds[1][i]);
-				float bMin = std::min(bounds[1][i],bounds[0][i]);
-				if(bMin > controllers[c].pos.v[i] || bMax < controllers[c].pos.v[i])
-				{
-					good = false;
-					break;
-				}
+				Controller c = controllers[i];
+				if(cylinder.isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2])
+					vr_pointer->TriggerHapticPulse(controllers[c].deviceId,controllers[c].idpad,400);
 			}
-			if(good)
-				vr_pointer->TriggerHapticPulse(controllers[c].deviceId,controllers[c].idpad,400);
-		}
 			
 			
 
