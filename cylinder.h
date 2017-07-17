@@ -1,6 +1,6 @@
 #ifndef CYLINDER_H_
 #define CYLINDER_H_
-
+#include <algorithm>
 class Cylinder 
 {
 
@@ -14,12 +14,13 @@ public:
 	void init();
 	bool isInside(float x, float y, float z);
 
-	float x1;
-	float z1;
-	float x2;
-	float z2;
+	float* s1;
+	float* s2;
+
 	float xOrigin;
 	float zOrigin;
+	float yMin;
+	float yMax;
 	float radiusSquared;
 
 	bool hasInit;

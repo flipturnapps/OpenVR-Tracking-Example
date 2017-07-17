@@ -181,51 +181,79 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		if(pController->deviceId == event.trackedDeviceIndex)
 			controllerIndex = i;
 	}
+
 	ControllerData* pC = &(controllers[controllerIndex]);
-	ButtonData* pBD;
 	
-
 	switch( event.data.controller.button )
-            {
-            case k_EButton_ApplicationMenu:
-              	pBD = &(pC->b_AppMenu);
-                break;
+	{
+		case k_EButton_ApplicationMenu:
+		switch(event.eventType)
+		{
+			case VREvent_ButtonPress:
+			cylinder->s1[0] = pC->pos.v[0];
+			cylinder->s1[2] = pC->pos.v[2];
+			break;
 
-            case k_EButton_Grip:
-                pBD = &(pC->b_Grip);
-                break;
+			case VREvent_ButtonUnpress:
+			cylinder->s2[0] = pC->pos.v[0];
+			cylinder->s2[2] = pC->pos.v[2];
+			cylinder->init();
+			break;
+		}
+		break;
 
-            case k_EButton_SteamVR_Trigger:
-                pBD = &(pC->b_Trigger);
-                break;
+		case k_EButton_Grip:
+		switch(event.eventType)
+		{
+			case VREvent_ButtonPress:
+			cylinder->s1[1] = pC->pos.v[1];
+			break;
 
-            case k_EButton_SteamVR_Touchpad:
-                pBD = &(pC->b_Pad);
-                break;
-            }
-    switch(event.eventType)
-            {
-            case VREvent_ButtonPress:
-               	pBD->pressed = true;
-               	cylinder->x1 = pC->pos.v[0];
-               	cylinder->z1 = pC->pos.v[2];
-                break;
+			case VREvent_ButtonUnpress:
+			cylinder->s2[1] = pC->pos.v[1];
+			cylinder->init();
+			break;
+		}
+		break;
 
-            case VREvent_ButtonUnpress:
-                pBD->pressed = false;
-              	cylinder->x2 = pC->pos.v[0];
-               	cylinder->z2 = pC->pos.v[2];
-           		cylinder->init();
-                break;
+		case k_EButton_SteamVR_Trigger:
+		switch(event.eventType)
+		{
+			case VREvent_ButtonPress:
+			cylinder->s1[0] = pC->pos.v[0];
+			cylinder->s1[2] = pC->pos.v[2];
+			break;
 
-            case VREvent_ButtonTouch:
-                pBD->touched = true;
-                break;
+			case VREvent_ButtonUnpress:
+			cylinder->s2[0] = pC->pos.v[0];
+			cylinder->s2[2] = pC->pos.v[2];
+			cylinder->init();
+			break;
+		}
+		break;
 
-            case VREvent_ButtonUntouch:
-                pBD->touched = false;
-                break;
-            }
+		case k_EButton_SteamVR_Touchpad:
+		
+		break;
+	}
+	switch(event.eventType)
+	{
+		case VREvent_ButtonPress:
+		
+		break;
+
+		case VREvent_ButtonUnpress:
+		
+		break;
+
+		case VREvent_ButtonTouch:
+		
+		break;
+
+		case VREvent_ButtonUntouch:
+		
+		break;
+	}
 }
 
 HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix) 
@@ -390,7 +418,7 @@ void LighthouseTracking::ControllerCoords()
 			for (int i = 0; i < 2; i++)
 			{
 				ControllerData c = controllers[i];
-				if(cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
+				if(cylinder->hasInit && cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
 					vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
 			}
 			
