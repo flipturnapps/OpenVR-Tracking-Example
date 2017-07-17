@@ -1,24 +1,9 @@
 #include "LighthouseTracking.h"
 #include <stdio.h>
 #include "cylinder.h"
+#include "cpTime.h"
 
 
-#if defined __linux
-#include <sys/time.h>
-
-#elif defined _WIN32 || defined __CYGWIN__
-#include <windows.h>
-
-#else     
-#error Platform not supported
-#endif
-
-long long currentTimeMillis()
-{
-	SYSTEMTIME time;
-	GetSystemTime(&time);
-	return (time.wSecond * 1000) + time.wMilliseconds;
-}
 
 // Destructor
 LighthouseTracking::~LighthouseTracking() 
@@ -405,5 +390,5 @@ void LighthouseTracking::ControllerCoords()
 	}		
 
 	
-    printf("\n%lld",currentTimeMillis());
+    printf("\n%lld",cpMillis());
 }
