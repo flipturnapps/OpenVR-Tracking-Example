@@ -212,7 +212,7 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
                	pBD->pressed = true;
                	for(int i = 0; i < 3; i++)
                	{
-               		bounds[0][i] = positions[controllerIndex].v[i];
+               		bounds[0][i] = pC->pos.v[i];
                	}
                 break;
 
@@ -220,7 +220,7 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
                 pBD->pressed = false;
                 for(int i = 0; i < 3; i++)
                	{
-               		bounds[1][i] = positions[controllerIndex].v[i];
+               		bounds[1][i] = pC->pos.v[i];
                	}
                	printf("\nBOUNDS %f %f | %f %f | %f %f", bounds[0][0],bounds[1][0],bounds[0][1],bounds[1][1],bounds[0][2],bounds[1][2] );
                 break;
@@ -335,7 +335,6 @@ void LighthouseTracking::ControllerCoords()
 {
 	TrackedDevicePose_t trackedDevicePose;
 	VRControllerState_t controllerState;
-	positions = new HmdVector3_t[2];
 
 	char** bufs = new char*[2];
 	bool* isOk = new bool[2];
@@ -343,29 +342,29 @@ void LighthouseTracking::ControllerCoords()
 	{
 		isOk[i] = false;
 		char* buf = new char[100];
-		ControllerData controller = (controllers[i]);
+		ControllerData* controller = &(controllers[i]);
 
-		if (controllers[i].deviceId < 0 || 
-			!vr_pointer->IsTrackedDeviceConnected(controllers[i].deviceId) || 
-			controllers[i].hand <= 0)
+		if (controller->deviceId < 0 || 
+			!vr_pointer->IsTrackedDeviceConnected(controller->deviceId) || 
+			controller->hand <= 0)
 			continue;
 
-		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controllers[i].deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
-		positions[i] = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
+		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controller->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
+		controller->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
 		
 		char handString[6];
 
-		if (controller.hand == 1)
+		if (controller->hand == 1)
 			sprintf(handString, "LEFT");
-		else if (controller.hand == 2)
+		else if (controller->hand == 2)
 			sprintf(handString, "RIGHT");
 
-		printf(" %s x: %.3f y: %.3f z: %.3f", handString, positions[i].v[0], positions[i].v[1], positions[i].v[2]);	
+		printf(" %s x: %.3f y: %.3f z: %.3f", handString, controller->pos.v[0], controller->pos.v[1], controller->pos.v[2]);	
 
-		int t = controller.idtrigger;
-		int p = controller.idpad;
+		int t = controller->idtrigger;
+		int p = controller->idpad;
 
-		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller.hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
+		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller->hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
 		bufs[i] = buf;
 		isOk[i] = true;
 	}
@@ -404,7 +403,7 @@ void LighthouseTracking::ControllerCoords()
 					continue;
 				float bMax = std::max(bounds[0][i],bounds[1][i]);
 				float bMin = std::min(bounds[1][i],bounds[0][i]);
-				if(bMin > positions[c].v[i] || bMax < positions[c].v[i])
+				if(bMin > controllers[c].pos.v[i] || bMax < controllers[c].pos.v[i])
 				{
 					good = false;
 					break;

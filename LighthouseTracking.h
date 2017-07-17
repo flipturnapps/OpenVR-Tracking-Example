@@ -45,6 +45,8 @@ public:
     	ButtonData b_Trigger;
     	ButtonData b_Grip;
     	ButtonData b_Pad;
+
+    	HmdVector3_t pos;
 	};
 	typedef struct _ControllerData ControllerData;
 
@@ -53,7 +55,6 @@ public:
 	int hmdDeviceId = -1;
 	int controllerInitCount = 0;
 	int initPassCount = 0;
-	HmdVector3_t* positions;
 	float** bounds;
 };
 
