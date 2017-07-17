@@ -1,7 +1,9 @@
 #include "cpTime.h"
+#include <stdio.h>
 
 #if defined __linux
 	#include <sys/time.h>
+	#include <time.h>
 	#include <unistd.h>
 	bool clockDef = false;
 	struct timespec start;
