@@ -172,6 +172,8 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 	return true;
 }
 
+long gripMillis;
+
 
 //This method deals exclusively with button events
 void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
@@ -188,23 +190,32 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 
 	ControllerData* pC = &(controllers[controllerIndex]);
 	
-	if (event.data.controller.button == k_EButton_Grip && event.eventType == VREvent_ButtonUnpress)
+	if (event.data.controller.button == k_EButton_ApplicationMenu && event.eventType == VREvent_ButtonUnpress)
 		inCylinderMode = !inCylinderMode;
 	if(inCylinderMode)
 	switch( event.data.controller.button )
 	{
 		
 
-		case k_EButton_ApplicationMenu:
+		case k_EButton_Grip:
 		switch(event.eventType)
 		{
 			case VREvent_ButtonPress:
-			cylinder->s1[1] = pC->pos.v[1];
+			if(cpMillis() - gripMillis > 300)
+				cylinder->s1[1] = pC->pos.v[1];
 			break;
 
 			case VREvent_ButtonUnpress:
-			cylinder->s2[1] = pC->pos.v[1];
+			if(cpMillis() - gripMillis > 300)
+				cylinder->s2[1] = pC->pos.v[1];
+			else
+				if(cylinder->s1[1] > cylinder->s2[1])
+					cylinder->s2[1] = std::numeric_limits<float>::min();
+				else
+					cylinder->s2[1] = std::numeric_limits<float>::max();
+				
 			cylinder->init();
+			gripMillis = cpMillis();
 			break;
 		}
 		break;

@@ -14,7 +14,7 @@
 	#error Platform not supported
 #endif
 
-long long cpMillis()
+long cpMillis()
 {
 	#if defined __linux
 		if(!clockDef)

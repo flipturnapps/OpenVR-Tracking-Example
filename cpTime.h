@@ -2,6 +2,6 @@
 #define CPTIME_H_
 
 
-long long cpMillis();
+long cpMillis();
 void cpSleep(int sleepMs);
 #endif
