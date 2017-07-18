@@ -3,23 +3,22 @@
 #include "cylinder.h"
 
 
-#if !defined(_WIN32) && !defined(_WIN64) && !defined(__CYGWIN__) 
-    #  include <sys/time.h>
-    typedef timeval sys_time_t;
-    inline void system_time(sys_time_t* t) {
-        gettimeofday(t, NULL);
-    }
-    inline long long time_to_msec(const sys_time_t& t) {
-        return t.tv_sec * 1000LL + t.tv_usec / 1000;
-    }
-    #else // Windows and MinGW
-    #  include <sys/timeb.h>
-    typedef _timeb sys_time_t;
-    inline void system_time(sys_time_t* t) { _ftime(t); }
-    inline long long time_to_msec(const sys_time_t& t) {
-        return t.time * 1000LL + t.millitm;
-    }
+#if defined __linux
+#include <sys/time.h>
+
+#elif defined _WIN32 || defined __CYGWIN__
+#include <windows.h>
+
+#else     
+#error Platform not supported
 #endif
+
+long long currentTimeMillis()
+{
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	return (time.wSecond * 1000) + time.wMilliseconds;
+}
 
 // Destructor
 LighthouseTracking::~LighthouseTracking() 
@@ -405,8 +404,6 @@ void LighthouseTracking::ControllerCoords()
 			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
 	}		
 
-	sys_time_t t;
-    system_time(&t);
-    long long currentTimeMs = time_to_msec(t);
-    printf("\n%lld",currentTimeMs);
+	
+    printf("\n%lld",currentTimeMillis());
 }
