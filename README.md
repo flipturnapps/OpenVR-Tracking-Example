@@ -72,7 +72,7 @@ All of the following controls (except toggling modes with the ApplicationMenu bu
 | Button  |   Function 
 |----------|:-------------|
 | Application Menu | Toggle from DrawingMode to SensingMode and back  | 
-| Trigger          | Hold to define or reset the circle cross-section of the cylinder approximating obstacle |
+| Trigger          | Hold to define or reset the circle that is a cross-section of the cylinder in the xz plane |
 | Grip             | Hold to define the vertical bounds of the current cylinder |
 | Trackpad (left)  | Switch work to the previous cylinder |
 | Trackpad (right) | Switch work to the next cylinder |
