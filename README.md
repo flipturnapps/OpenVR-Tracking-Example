@@ -70,7 +70,7 @@ When moving to different cylinder, the controllers should vibrate the current in
 All of the following controls (except toggling modes with the ApplicationMenu button) only work in DrawingMode.
 
 | Button  |   Function 
-|----------|:-------------:|
+|----------|:-------------|
 | Application Menu | Toggle from DrawingMode to SensingMode and back  | 
 | Trigger          | Hold to define or reset the circle cross-section of the cylinder approximating obstacle |
 | Grip             | Hold to define the vertical bounds of the current cylinder |
