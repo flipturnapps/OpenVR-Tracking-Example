@@ -26,6 +26,8 @@ void Cylinder::init()
 	yMax = std::max(s1[1],s2[1]);
 	yMin = std::min(s1[1],s2[1]);
 	hasInit = true;
+
+	printf("yMin=%f yMax=%f",yMin,yMax);
 }
 
 

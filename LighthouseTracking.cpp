@@ -201,7 +201,7 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		switch(event.eventType)
 		{
 			case VREvent_ButtonPress:
-			if(cpMillis() - gripMillis > 300)
+			if(cpMillis() - gripMillis > 250)
 				cylinder->s1[1] = pC->pos.v[1];
 			break;
 
@@ -209,10 +209,13 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 			if(cpMillis() - gripMillis > 300)
 				cylinder->s2[1] = pC->pos.v[1];
 			else
+			{
 				if(cylinder->s1[1] > cylinder->s2[1])
 					cylinder->s2[1] = std::numeric_limits<float>::min();
 				else
 					cylinder->s2[1] = std::numeric_limits<float>::max();
+				printf("to infinity and beyond");
+			}
 				
 			cylinder->init();
 			gripMillis = cpMillis();
@@ -384,7 +387,7 @@ void LighthouseTracking::ControllerCoords()
 		isOk[i] = true;
 	}
 	
-	if(isOk[0] == true)
+	if(false && isOk[0] == true)
 	{
 		printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
 		if(isOk[1] == true)
@@ -401,5 +404,5 @@ void LighthouseTracking::ControllerCoords()
 	}		
 
 	
-    printf("\n%lld",cpMillis());
+   // printf("\n%lld",cpMillis());
 }

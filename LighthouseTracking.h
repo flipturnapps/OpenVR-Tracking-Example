@@ -48,7 +48,7 @@ public:
 	
 	Cylinder* cylinder;
 
-	bool inCylinderMode = false;
+	bool inCylinderMode = true;
 	int cylinderIndex = 0;
 };
 
