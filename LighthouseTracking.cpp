@@ -1,19 +1,21 @@
+// The main file for dealing with VR specifically.  See LighthouseTracking.h for descriptions of each function in the class.
+
 #include "LighthouseTracking.h"
 #include <stdio.h>
 #include "cylinder.h"
 #include "cpTime.h"
 
-// Destructor
+// Destructor for the LighthouseTracking object
 LighthouseTracking::~LighthouseTracking() 
 {
 	if (vr_pointer != NULL)
 	{
-		VR_Shutdown();
+		VR_Shutdown(); // https://github.com/ValveSoftware/openvr/wiki/API-Documentation#initialization-and-cleanup
 		vr_pointer = NULL;
 	}
 }
 
-// Constructor
+// Constructor for the LighthouseTracking object
 LighthouseTracking::LighthouseTracking() 
 {
 	// Definition of EVRInitError local variable
