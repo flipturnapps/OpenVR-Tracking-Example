@@ -50,7 +50,7 @@ As of now, the only shapes that can be used for collision testing are cylinders 
 
 5. Switch to SensingMode by pressing the ApplicationMenu button, and test to see if the controllers will rumble if nearby the obstacle.
 
-### Extending vertical bounds forever in one direction
+### Extending vertical bounds infinitely in one direction
 
 Often, the obstacles you might want to test with are on the floor and don't have any empty space under them.  To define the obstacle with infinite depth going downwards so that you don't have to rub your Vive controllers on the ground to properly define the obstacle, use the following control: 
 
@@ -70,8 +70,8 @@ When moving to different cylinder, the controllers should vibrate the current in
 All of the following controls (except toggling modes with the ApplicationMenu button) only work in DrawingMode.
 
 | Button  |   Function 
-| Application Menu | Toggle from DrawingMode to SensingMode and back  | 
 |----------|:-------------:|
+| Application Menu | Toggle from DrawingMode to SensingMode and back  | 
 | Trigger          | Hold to define or reset the circle cross-section of the cylinder approximating obstacle |
 | Grip             | Hold to define the vertical bounds of the current cylinder |
 | Trackpad (left)  | Switch work to the previous cylinder |
