@@ -12,8 +12,8 @@ Cylinder::Cylinder()
 	s1 = new float[3];
 	s2 = new float[3];
 	s1[1] = std::numeric_limits<float>::max();
-	s2[1] = -1 * std::numeric_limits<float>::max();
-	yMin = -1 * std::numeric_limits<float>::max();
+	s2[1] = -std::numeric_limits<float>::max();
+	yMin = -std::numeric_limits<float>::max();
 	yMax = std::numeric_limits<float>::max();
 }
 
@@ -27,8 +27,7 @@ void Cylinder::init()
 	yMax = std::max(s1[1],s2[1]);
 	yMin = std::min(s1[1],s2[1]);
 	hasInit = true;
-
-	printf("\nyMin=%f yMax=%f",yMin,yMax);
+	//printf("\nyMin=%f yMax=%f",yMin,yMax);
 }
 
 

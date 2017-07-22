@@ -189,6 +189,8 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 	
 	if (event.data.controller.button == k_EButton_ApplicationMenu && event.eventType == VREvent_ButtonUnpress)
 		inCylinderMode = !inCylinderMode;
+	if(event.data.controller.button == k_EButton_ApplicationMenu && event.eventType == VREvent_ButtonUnpress && inCylinderMode)
+		cylinderIndex++;
 	if(inCylinderMode)
 	switch( event.data.controller.button )
 	{
@@ -196,12 +198,12 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		switch(event.eventType)
 		{
 			case VREvent_ButtonPress:
-			if(cpMillis() - gripMillis > 1000)
+			if(cpMillis() - gripMillis > 500)
 				cylinder->s1[1] = pC->pos.v[1];
 			break;
 
 			case VREvent_ButtonUnpress:
-			if(cpMillis() - gripMillis > 1000)
+			if(cpMillis() - gripMillis > 500)
 				cylinder->s2[1] = pC->pos.v[1];
 			else
 			{
@@ -390,11 +392,14 @@ void LighthouseTracking::ControllerCoords()
 		}
 	}
 
+	int n = (cpMillis()/100)%(50);
 	for (int i = 0; i < 2; i++)
 	{
 		ControllerData c = controllers[i];
-		if(cylinder->hasInit && cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
+		if(!inCylinderMode && cylinder->hasInit && cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
 			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
+		else if (inCylinderMode && n % 3 == 0 && n <= cylinderIndex*2)
+			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,250);
 	}		
 
 	
