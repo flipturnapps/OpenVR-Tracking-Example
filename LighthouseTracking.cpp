@@ -3,8 +3,6 @@
 #include "cylinder.h"
 #include "cpTime.h"
 
-
-
 // Destructor
 LighthouseTracking::~LighthouseTracking() 
 {
@@ -168,7 +166,6 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 			else
 				printf("\nEVENT--(OpenVR) Event: %d", event.eventType);
 	}
-
 	return true;
 }
 
@@ -195,26 +192,23 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 	if(inCylinderMode)
 	switch( event.data.controller.button )
 	{
-		
-
 		case k_EButton_Grip:
 		switch(event.eventType)
 		{
 			case VREvent_ButtonPress:
-			if(cpMillis() - gripMillis > 250)
+			if(cpMillis() - gripMillis > 1000)
 				cylinder->s1[1] = pC->pos.v[1];
 			break;
 
 			case VREvent_ButtonUnpress:
-			if(cpMillis() - gripMillis > 300)
+			if(cpMillis() - gripMillis > 1000)
 				cylinder->s2[1] = pC->pos.v[1];
 			else
 			{
 				if(cylinder->s1[1] > cylinder->s2[1])
-					cylinder->s2[1] = std::numeric_limits<float>::min();
+					cylinder->s2[1] = -std::numeric_limits<float>::max();
 				else
 					cylinder->s2[1] = std::numeric_limits<float>::max();
-				printf("to infinity and beyond");
 			}
 				
 			cylinder->init();

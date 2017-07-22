@@ -2,13 +2,10 @@
 #define CYLINDER_H_
 #include <algorithm>
 #include <cmath>
+#include <stdio.h>
+
 class Cylinder 
 {
-
-
-	
-	
-
 public:
 	~Cylinder();
 	Cylinder();
@@ -26,7 +23,4 @@ public:
 
 	bool hasInit;
 };
-
-
-
 #endif
