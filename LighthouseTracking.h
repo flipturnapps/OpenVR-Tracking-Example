@@ -47,7 +47,7 @@ public:
 	ControllerData controllers[2];
 
 	int hmdDeviceId = -1;
-	int controllerInitCount = 0;
+	long int controllerInitCount = 0;
 	int initPassCount = 0;
 	
 	Cylinder** cylinders;

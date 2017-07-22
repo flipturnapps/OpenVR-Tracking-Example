@@ -10,7 +10,8 @@ LighthouseTracking::~LighthouseTracking()
 {
 	if (vr_pointer != NULL)
 	{
-		VR_Shutdown(); // https://github.com/ValveSoftware/openvr/wiki/API-Documentation#initialization-and-cleanup
+		// VR Shutdown: https://github.com/ValveSoftware/openvr/wiki/API-Documentation#initialization-and-cleanup
+		VR_Shutdown(); 
 		vr_pointer = NULL;
 	}
 }
@@ -18,12 +19,12 @@ LighthouseTracking::~LighthouseTracking()
 // Constructor for the LighthouseTracking object
 LighthouseTracking::LighthouseTracking() 
 {
-	// Definition of EVRInitError local variable
+	// Definition of the init error
 	EVRInitError eError = VRInitError_None;
 
 	/*
 	VR_Init (
-	  	arg1: Pointer to EVRInitError type (I think its an enum)
+	  	arg1: Pointer to EVRInitError type (enum defined in openvr.h)
 	  	arg2: Must be of type EVRApplicationType
 
 	  		The type of VR Applicaion.  This example uses the SteamVR instance that is already running.  
@@ -37,7 +38,7 @@ LighthouseTracking::LighthouseTracking()
 
 	vr_pointer = VR_Init(&eError, VRApplication_Background);
 
-	// If the init failed because of the error
+	// If the init failed because of an error
 	if (eError != VRInitError_None)
 	{
 		vr_pointer = NULL;
@@ -45,6 +46,7 @@ LighthouseTracking::LighthouseTracking()
 		exit(EXIT_FAILURE);
 	}
 
+	//If the init didn't fail, init the Cylinder object array
 	cylinders = new Cylinder*[10];
 	for(int i = 0 ; i < 10; i++)
 	{
@@ -52,13 +54,7 @@ LighthouseTracking::LighthouseTracking()
 	}
 }
 
-/*
-	defined fuction RunProcedure()
 
-	* Loop-listen for events then parses them (e.g. prints the to user)
-	* Returns true if success or false if openvr has quit
-	* Should be called by main.cpp 
-*/
 bool LighthouseTracking::RunProcedure() 
 {
 	// Define a VREvent
@@ -76,16 +72,11 @@ bool LighthouseTracking::RunProcedure()
 			return false;
 		}
 	}
+	// ParseTrackingFrame() is where the tracking and vibration code starts
 	ParseTrackingFrame();
 	return true;
 }
 
-/*
-	defined fuction ProcessVREvent()
-
-	* Takes a single vr:VREvent_t and processes the result
-	* Returns false if OpenVR has quit, otherwise returns true
-*/
 bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 {
 	switch (event.eventType)
@@ -167,33 +158,37 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 		break;
 		
 		default:
-			if (event.eventType >= 200 && event.eventType <= 203)
+			if (event.eventType >= 200 && event.eventType <= 203) //Button events range from 200-203
 				dealWithButtonEvent(event);
 			else
-				printf("\nEVENT--(OpenVR) Event: %d", event.eventType);
+				printf("\nEVENT--(OpenVR) Event: %d", event.eventType); 
+		// Check entire event list starts on line #452: https://github.com/ValveSoftware/openvr/blob/master/headers/openvr.h
+
 	}
 	return true;
 }
 
+//Stores the number of ms elapsed when the grip was released.
 long gripMillis;
 
 
 //This method deals exclusively with button events
 void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 {
-	int controllerIndex;
-	for (int i = 0; i < 2; i++)
+	int controllerIndex; //The index of the controllers[] array that corresponds with the controller that had a buttonEvent
+	for (int i = 0; i < 2; i++) //Iterates across the array of controllers
 	{
 		ControllerData* pController = &(controllers[i]);
 		if(event.trackedDeviceIndex == pController->deviceId) //prints the event data to the terminal
 			printf("\nBUTTON-E--index=%d deviceId=%d hand=%d button=%d event=%d",i,pController->deviceId,pController->hand,event.data.controller.button,event.eventType);
-		if(pController->deviceId == event.trackedDeviceIndex)
+		if(pController->deviceId == event.trackedDeviceIndex) //This tests to see if the current controller from the loop is the same from the event
 			controllerIndex = i;
 	}
 
-	ControllerData* pC = &(controllers[controllerIndex]);
+	ControllerData* pC = &(controllers[controllerIndex]); //The pointer to the ControllerData struct
 	
-	if (event.data.controller.button == k_EButton_ApplicationMenu && event.eventType == VREvent_ButtonUnpress)
+	if (event.data.controller.button == k_EButton_ApplicationMenu //Test if the ApplicationButton was pressed
+		&& event.eventType == VREvent_ButtonUnpress)              //Test if the button is being released (the action happens on release, not press)
 	{
 		inDrawingMode = !inDrawingMode;
 		doRumbleNow = true;
@@ -201,23 +196,23 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 	if(inDrawingMode)
 	switch( event.data.controller.button )
 	{
-		case k_EButton_Grip:
+		case k_EButton_Grip:  //If it is the grip button that was...
 		switch(event.eventType)
 		{
-			case VREvent_ButtonPress:
-			if(cpMillis() - gripMillis > 500)
-				cylinders[cylinderIndex]->s1[1] = pC->pos.v[1];
+			case VREvent_ButtonPress:   // ...pressed...
+			if(cpMillis() - gripMillis > 500) // ...and it's been half a second since the grip was last released...
+				cylinders[cylinderIndex]->s1[1] = pC->pos.v[1];  //...then set the cylinder's y 1 to the controllers y coordinate.
 			break;
 
-			case VREvent_ButtonUnpress:
-			if(cpMillis() - gripMillis > 500)
-				cylinders[cylinderIndex]->s2[1] = pC->pos.v[1];
-			else
+			case VREvent_ButtonUnpress: // ...released...
+			if(cpMillis() - gripMillis > 500) // ...and it's been half a second since the grip was last released...
+				cylinders[cylinderIndex]->s2[1] = pC->pos.v[1];  //...then set the cylinder's y 2 to the controllers y coordinate.
+			else                              // ...and it' hasn't been half a second since the grip was last released...
 			{
-				if(cylinders[cylinderIndex]->s1[1] > cylinders[cylinderIndex]->s2[1])
-					cylinders[cylinderIndex]->s2[1] = -std::numeric_limits<float>::max();
-				else
-					cylinders[cylinderIndex]->s2[1] = std::numeric_limits<float>::max();
+				if(cylinders[cylinderIndex]->s1[1] > pC->pos.v[1])  // ...if the controller's position is **below** the starting position...
+					cylinders[cylinderIndex]->s2[1] = -std::numeric_limits<float>::max(); // ...set the cylinder's y 2 to negative infinity.
+				else                                                // ...if the controller's position is **above** the starting position...
+					cylinders[cylinderIndex]->s2[1] = std::numeric_limits<float>::max();  // ...set the cylinder's y 2 to positive infinity.
 			}
 				
 			cylinders[cylinderIndex]->init();
@@ -226,17 +221,17 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		}
 		break;
 
-		case k_EButton_SteamVR_Trigger:
+		case k_EButton_SteamVR_Trigger:  
 		switch(event.eventType)
 		{
-			case VREvent_ButtonPress:
-			cylinders[cylinderIndex]->s1[0] = pC->pos.v[0];
-			cylinders[cylinderIndex]->s1[2] = pC->pos.v[2];
+			case VREvent_ButtonPress:  //If the trigger was pressed...
+			cylinders[cylinderIndex]->s1[0] = pC->pos.v[0];  //Set the cylinder's x 1 to the controller's x
+			cylinders[cylinderIndex]->s1[2] = pC->pos.v[2];  //Set the cylinder's z 1 to the controller's z
 			break;
 
-			case VREvent_ButtonUnpress:
-			cylinders[cylinderIndex]->s2[0] = pC->pos.v[0];
-			cylinders[cylinderIndex]->s2[2] = pC->pos.v[2];
+			case VREvent_ButtonUnpress://If the trigger was released...
+			cylinders[cylinderIndex]->s2[0] = pC->pos.v[0];  //Set the cylinder's x 2 to the controller's x
+			cylinders[cylinderIndex]->s2[2] = pC->pos.v[2];  //Set the cylinder's z 2 to the controller's z
 			cylinders[cylinderIndex]->init();
 			break;
 		}
@@ -249,21 +244,21 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 			
 			break;
 
-			case VREvent_ButtonUnpress:
-			if(std::abs(pC->padX) > std::abs(pC->padY))
+			case VREvent_ButtonUnpress://If the touchpad was just pressed
+			if(std::abs(pC->padX) > std::abs(pC->padY))       //Tests if the left or right of the pad was pressed
 			{
-			if (pC->padX < 0 && cylinderIndex != 0)
-				cylinderIndex = cylinderIndex-1;
-			else if (pC->padX > 0 && cylinderIndex < 10)
-				cylinderIndex = cylinderIndex+1;
-			doRumbleNow = true;
-			}
-			else
-			{
-				if (pC->padY > 0)
+				if (pC->padX < 0 && cylinderIndex != 0)       //If left side of pad was pressed and there is a previous cylinder
+					cylinderIndex = cylinderIndex-1;          //Switch index to previous cylinder
+				else if (pC->padX > 0 && cylinderIndex < 10)  //If the right side of the pad was pressed 
+					cylinderIndex = cylinderIndex+1;          //Switch the index to the next cylinder
 				doRumbleNow = true;
-			else if (pC->padY < 0)
-				cylinders[cylinderIndex] = new Cylinder();
+			}
+			else                         //If the top/bottom of the pad was pressed
+			{
+				if (pC->padY > 0)        //If the top was pressed               
+					doRumbleNow = true;
+				else if (pC->padY < 0)   //If the bottom was pressed, reset the current cylinder
+					cylinders[cylinderIndex] = new Cylinder();
 			}
 			break;
 		}
@@ -283,17 +278,18 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 	return vector;
 }
 
-//This method iterates across the maximum number of devices that can be attatched to the SteamVR system
-// and finds which ids correlate to the HMD and controllers;
+
 void LighthouseTracking::iterateAssignIds()
 {
-	initPassCount = 0;
-	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)
+	initPassCount = 0; // initPassCount is a field which counts how many frames have gone by without running this method
+	                   //   if this method is currently executing, then zero frames have gone by since the last time it ran
+	
+	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)  // Iterates across all of the potential device indicies
 	{
 		if (!vr_pointer->IsTrackedDeviceConnected(i))
 			continue; //Doesn't use the id if the device isn't connected
 
-
+		//vr_pointer points to the VRSystem that was in init'ed in the constructor.
 		ETrackedDeviceClass trackedDeviceClass = vr_pointer->GetTrackedDeviceClass(i);
 
 		//Finding the type of device
@@ -304,19 +300,22 @@ void LighthouseTracking::iterateAssignIds()
 		}
 		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
 		{
-			int initIndex = controllerInitCount % 2;
-			ControllerData* pController = &(controllers[initIndex]);
+			//Uses the modulus operator so that the same controller in the array doesn't keep being initialized.
+			//  Should alternate which index is used each time this block gets run.
+			int initIndex = controllerInitCount % 2; 
+			ControllerData* pC = &(controllers[initIndex]);
+
 			int sHand = -1;
 
 			ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(i);
-			if (role == TrackedControllerRole_Invalid)
+			if (role == TrackedControllerRole_Invalid) //Invalid hand is actually very common, always need to test for invalid hand (lighthouses have lost tracking)
 				sHand = 0;
 			else if (role == TrackedControllerRole_LeftHand)
 				sHand = 1;
 			else if (role == TrackedControllerRole_RightHand)
 				sHand = 2;
-			pController->hand = sHand;
-			pController->deviceId = i;
+			pC->hand = sHand;
+			pC->deviceId = i;
 
 
 
@@ -326,9 +325,9 @@ void LighthouseTracking::iterateAssignIds()
                     (ETrackedDeviceProperty)(Prop_Axis0Type_Int32 + x));
 
                 if( prop==k_eControllerAxis_Trigger )
-                    pController->idtrigger = x;
+                    pC->idtrigger = x;
                 else if( prop==k_eControllerAxis_TrackPad )
-                    pController->idpad = x;
+                    pC->idpad = x;
             }
 
 
