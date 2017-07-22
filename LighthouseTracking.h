@@ -36,6 +36,10 @@ public:
     	int idtrigger = -1;
     	int idpad = -1;
 
+    	float padX;
+    	float padY;
+    	float trigVal;
+
     	HmdVector3_t pos;
 	};
 	typedef struct _ControllerData ControllerData;
@@ -46,10 +50,12 @@ public:
 	int controllerInitCount = 0;
 	int initPassCount = 0;
 	
-	Cylinder* cylinder;
+	Cylinder** cylinders;
 
-	bool inCylinderMode = true;
+	bool inDrawingMode = true;
 	int cylinderIndex = 0;
+	bool doRumbleNow = false;
+	long rumbleMsOffset = 0;
 };
 
 #endif

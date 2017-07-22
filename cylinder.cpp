@@ -15,6 +15,7 @@ Cylinder::Cylinder()
 	s2[1] = -std::numeric_limits<float>::max();
 	yMin = -std::numeric_limits<float>::max();
 	yMax = std::numeric_limits<float>::max();
+	radius = 0;
 }
 
 void Cylinder::init()

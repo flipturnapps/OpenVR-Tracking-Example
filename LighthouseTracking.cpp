@@ -43,7 +43,11 @@ LighthouseTracking::LighthouseTracking()
 		exit(EXIT_FAILURE);
 	}
 
-	cylinder = new Cylinder();
+	cylinders = new Cylinder*[10];
+	for(int i = 0 ; i < 10; i++)
+	{
+		cylinders[i] = new Cylinder();
+	}
 }
 
 /*
@@ -188,10 +192,11 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 	ControllerData* pC = &(controllers[controllerIndex]);
 	
 	if (event.data.controller.button == k_EButton_ApplicationMenu && event.eventType == VREvent_ButtonUnpress)
-		inCylinderMode = !inCylinderMode;
-	if(event.data.controller.button == k_EButton_ApplicationMenu && event.eventType == VREvent_ButtonUnpress && inCylinderMode)
-		cylinderIndex++;
-	if(inCylinderMode)
+	{
+		inDrawingMode = !inDrawingMode;
+		doRumbleNow = true;
+	}
+	if(inDrawingMode)
 	switch( event.data.controller.button )
 	{
 		case k_EButton_Grip:
@@ -199,21 +204,21 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		{
 			case VREvent_ButtonPress:
 			if(cpMillis() - gripMillis > 500)
-				cylinder->s1[1] = pC->pos.v[1];
+				cylinders[cylinderIndex]->s1[1] = pC->pos.v[1];
 			break;
 
 			case VREvent_ButtonUnpress:
 			if(cpMillis() - gripMillis > 500)
-				cylinder->s2[1] = pC->pos.v[1];
+				cylinders[cylinderIndex]->s2[1] = pC->pos.v[1];
 			else
 			{
-				if(cylinder->s1[1] > cylinder->s2[1])
-					cylinder->s2[1] = -std::numeric_limits<float>::max();
+				if(cylinders[cylinderIndex]->s1[1] > cylinders[cylinderIndex]->s2[1])
+					cylinders[cylinderIndex]->s2[1] = -std::numeric_limits<float>::max();
 				else
-					cylinder->s2[1] = std::numeric_limits<float>::max();
+					cylinders[cylinderIndex]->s2[1] = std::numeric_limits<float>::max();
 			}
 				
-			cylinder->init();
+			cylinders[cylinderIndex]->init();
 			gripMillis = cpMillis();
 			break;
 		}
@@ -223,20 +228,43 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 		switch(event.eventType)
 		{
 			case VREvent_ButtonPress:
-			cylinder->s1[0] = pC->pos.v[0];
-			cylinder->s1[2] = pC->pos.v[2];
+			cylinders[cylinderIndex]->s1[0] = pC->pos.v[0];
+			cylinders[cylinderIndex]->s1[2] = pC->pos.v[2];
 			break;
 
 			case VREvent_ButtonUnpress:
-			cylinder->s2[0] = pC->pos.v[0];
-			cylinder->s2[2] = pC->pos.v[2];
-			cylinder->init();
+			cylinders[cylinderIndex]->s2[0] = pC->pos.v[0];
+			cylinders[cylinderIndex]->s2[2] = pC->pos.v[2];
+			cylinders[cylinderIndex]->init();
 			break;
 		}
 		break;
 
 		case k_EButton_SteamVR_Touchpad:
-		
+		switch(event.eventType)
+		{
+			case VREvent_ButtonPress:
+			
+			break;
+
+			case VREvent_ButtonUnpress:
+			if(std::abs(pC->padX) > std::abs(pC->padY))
+			{
+			if (pC->padX < 0 && cylinderIndex != 0)
+				cylinderIndex = cylinderIndex-1;
+			else if (pC->padX > 0 && cylinderIndex < 10)
+				cylinderIndex = cylinderIndex+1;
+			doRumbleNow = true;
+			}
+			else
+			{
+				if (pC->padY > 0)
+				doRumbleNow = true;
+			else if (pC->padY < 0)
+				cylinders[cylinderIndex] = new Cylinder();
+			}
+			break;
+		}
 		break;
 	}
 	
@@ -378,7 +406,11 @@ void LighthouseTracking::ControllerCoords()
 		int t = controller->idtrigger;
 		int p = controller->idpad;
 
-		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller->hand , controllerState.rAxis[t].x,controllerState.rAxis[p].x,controllerState.rAxis[p].y);
+		controller->trigVal = controllerState.rAxis[t].x;
+		controller->padX = controllerState.rAxis[p].x;
+		controller->padY = controllerState.rAxis[p].y;
+
+		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller->hand , controller->trigVal , controller->padX , controller->padY);
 		bufs[i] = buf;
 		isOk[i] = true;
 	}
@@ -392,15 +424,31 @@ void LighthouseTracking::ControllerCoords()
 		}
 	}
 
-	int n = (cpMillis()/100)%(50);
+	if(doRumbleNow)
+	{
+		rumbleMsOffset = cpMillis();
+		doRumbleNow = false;
+	}
+
+	int indexN = ((cpMillis()-rumbleMsOffset)/150)%(125);
 	for (int i = 0; i < 2; i++)
 	{
+
 		ControllerData c = controllers[i];
-		if(!inCylinderMode && cylinder->hasInit && cylinder->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
-			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
-		else if (inCylinderMode && n % 3 == 0 && n <= cylinderIndex*2)
-			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,250);
-	}		
+
+		if(!inDrawingMode)
+		for(int x = 0; x < 10 ; x++)
+		{
+			Cylinder*  currCy = cylinders[x];
+			if(!inDrawingMode && currCy->hasInit && currCy->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
+				vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
+		}
+
+
+		if (inDrawingMode && indexN % 3 == 0 && indexN < (cylinderIndex+1)*3)
+			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,300);	
+	}	
+
 
 	
    // printf("\n%lld",cpMillis());
