@@ -25,7 +25,7 @@ bash build/compile.sh
 ./build/track
 
 ```
-More information about the compile process and screenshots of what you should see throughout the process can be found on the [Compile Guide](https://github.com/flipturnapps/OpenVR-Tracking-Example/wiki/CompileGuide.md).
+More information about the compile process and screenshots of what you should see throughout the process can be found on the [Compile Guide](https://github.com/flipturnapps/OpenVR-Tracking-Example/wiki/CompileGuide).
 
 ## How do I play it?
 
