@@ -104,4 +104,9 @@ And I installed the following packages on aptitude:
 * libsdl2-dev
 * libglfw3-dev
 
+## Features in Development
 
+[ ] All current source code properly commented
+[ ] Allow for controller states to be tested/printed in English like original project
+[ ] Use command line arguments to decide what information to print
+[ ] Make some sort of index to easily find answers to how to do simple VR library calls
