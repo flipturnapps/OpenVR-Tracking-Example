@@ -113,6 +113,6 @@ And I installed the following packages on aptitude:
 - [ ] All current source code properly commented
 - [ ] Allow for controller states to be tested/printed in English like original project
 - [ ] Test/print coords for the vive tracker like the original base of the fork
-- [ ] Use command line arguments to decide what information to print
+- [x] Use command line arguments to decide what information to print
 - [ ] Allow for rotational data to be printed too
 - [ ] Make some sort of index to easily find answers to how to do simple VR library calls
