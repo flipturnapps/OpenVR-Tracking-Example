@@ -110,8 +110,8 @@ And I installed the following packages on aptitude:
 
 ## Features in Development
 
-- [x] All current source code properly commented
-- [ ] Allow for controller states to be tested/printed in English like original project
+- [ ] All new features properly commented
+- [x] Allow for controller states to be tested/printed in English like original project
 - [ ] Test/print coords for the vive tracker like the original base of the fork
 - [x] Use command line arguments to decide what information to print
 - [ ] Allow for rotational data to be printed too
