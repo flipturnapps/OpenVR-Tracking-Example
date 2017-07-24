@@ -104,6 +104,7 @@ public:
 	};
 	typedef struct _ControllerData ControllerData;
 
+
 	//An array of ControllerData structs
 	ControllerData controllers[2];
 
@@ -135,5 +136,13 @@ public:
 	
 	unsigned const int MAX_CYLINDERS = 10;
 };
+
+struct _InitFlags
+	{
+		bool printCoords = true;
+		bool printButtonStates = false;
+		bool printEvents = true;
+	};
+	typedef struct _InitFlags InitFlags;
 
 #endif
