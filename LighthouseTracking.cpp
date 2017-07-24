@@ -1,9 +1,7 @@
+
 // The main file for dealing with VR specifically.  See LighthouseTracking.h for descriptions of each function in the class.
 
 #include "LighthouseTracking.h"
-#include <stdio.h>
-#include "cylinder.h"
-#include "cpTime.h"
 
 // Destructor for the LighthouseTracking object
 LighthouseTracking::~LighthouseTracking() 
@@ -280,6 +278,14 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 
 void LighthouseTracking::iterateAssignIds()
 {
+
+	//Un-assigns the deviceIds and hands of controllers. If they are truely connected, will be re-assigned later in this function
+	controllers[0].deviceId = -1;
+	controllers[1].deviceId = -1;
+	controllers[0].hand = -1;
+	controllers[1].hand = -1;
+
+
 	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)  // Iterates across all of the potential device indicies
 	{
 		if (!vr_pointer->IsTrackedDeviceConnected(i))
