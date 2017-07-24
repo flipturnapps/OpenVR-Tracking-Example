@@ -18,6 +18,8 @@ LighthouseTracking::~LighthouseTracking()
 LighthouseTracking::LighthouseTracking(InitFlags f) 
 {
 	flags = f;
+	coordsBuf = new char[1024];
+	trackBuf = new char[1024];
 
 	// Definition of the init error
 	EVRInitError eError = VRInitError_None;
@@ -281,6 +283,20 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 	return vector;
 }
 
+HmdQuaternion_t LighthouseTracking::GetRotation(vr::HmdMatrix34_t matrix)
+{
+	vr::HmdQuaternion_t q;
+
+	q.w = sqrt(fmax(0, 1 + matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2])) / 2;
+	q.x = sqrt(fmax(0, 1 + matrix.m[0][0] - matrix.m[1][1] - matrix.m[2][2])) / 2;
+	q.y = sqrt(fmax(0, 1 - matrix.m[0][0] + matrix.m[1][1] - matrix.m[2][2])) / 2;
+	q.z = sqrt(fmax(0, 1 - matrix.m[0][0] - matrix.m[1][1] + matrix.m[2][2])) / 2;
+	q.x = copysign(q.x, matrix.m[2][1] - matrix.m[1][2]);
+	q.y = copysign(q.y, matrix.m[0][2] - matrix.m[2][0]);
+	q.z = copysign(q.z, matrix.m[1][0] - matrix.m[0][1]);
+	return q;
+}
+
 
 void LighthouseTracking::iterateAssignIds()
 {
@@ -382,6 +398,10 @@ void LighthouseTracking::ParseTrackingFrame()
 	}
 	HMDCoords();                            
 	ControllerCoords();
+	if(flags.printCoords)
+		printf("\nCOORDS-- %s",coordsBuf);
+	if(flags.printTrack)
+		printf("\nTRACK-- %s",trackBuf);
 }
 
 void LighthouseTracking::HMDCoords()
@@ -396,8 +416,8 @@ void LighthouseTracking::HMDCoords()
 			printf( "\nINFO--Input Focus by Another Process");
 	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1); 
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
-	if(flags.printCoords)
-		printf("\nCOORDS-- HMD x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
+	sprintf(coordsBuf,"HMD %-28.28s", getPoseXYZString(trackedDevicePose));
+	sprintf(trackBuf,"HMD: %-25.25s %-7.7s " , getEnglishTrackingResultForPose(trackedDevicePose) , getEnglishPoseValidity(trackedDevicePose));
 }
 
 void LighthouseTracking::ControllerCoords()
@@ -443,8 +463,11 @@ void LighthouseTracking::ControllerCoords()
 		else if (pC->hand == 2)
 			sprintf(handString, "RIGHT");
 
-		if(flags.printCoords)
-			printf(" %s x: %.3f y: %.3f z: %.3f", handString, pC->pos.v[0], pC->pos.v[1], pC->pos.v[2]);	
+		pC->isValid =trackedDevicePose.bPoseIsValid;
+
+		
+		sprintf(coordsBuf,"%s %s: %-28.28s",coordsBuf, handString, getPoseXYZString(trackedDevicePose));
+		sprintf(trackBuf,"%s %s: %-25.25s %-7.7s" , trackBuf, handString, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
 
 		int t = pC->idtrigger;
 		int p = pC->idpad;
@@ -480,3 +503,52 @@ void LighthouseTracking::ControllerCoords()
 		}
 	}
 }
+
+char* LighthouseTracking::getEnglishTrackingResultForPose(TrackedDevicePose_t pose)
+{
+	char* buf = new char[50];
+	switch (pose.eTrackingResult) 
+	{
+		case vr::ETrackingResult::TrackingResult_Uninitialized:
+				sprintf(buf, "Invalid tracking result");
+				break;
+		case vr::ETrackingResult::TrackingResult_Calibrating_InProgress:
+				sprintf(buf, "Calibrating in progress");
+				break;
+		case vr::ETrackingResult::TrackingResult_Calibrating_OutOfRange:
+				sprintf(buf, "Calibrating Out of range");
+				break;
+		case vr::ETrackingResult::TrackingResult_Running_OK:
+				sprintf(buf, "Running OK");
+				break;
+		case vr::ETrackingResult::TrackingResult_Running_OutOfRange:
+				sprintf(buf, "WARNING: Running Out of Range");
+				break;
+		default:
+				sprintf(buf, "Default");
+				break;
+	}
+	return buf;
+}
+
+char* LighthouseTracking::getEnglishPoseValidity(TrackedDevicePose_t pose)
+{
+	char* buf = new char[50];
+	if(pose.bPoseIsValid)
+		sprintf(buf, "Valid");
+	else
+		sprintf(buf, "Invalid");
+	return buf;
+}
+
+char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose)
+{
+	HmdVector3_t pos = GetPosition(pose.mDeviceToAbsoluteTracking);
+	char* cB = new char[50];
+		if(pose.bPoseIsValid)
+			sprintf(cB, "x: %.3f y: %.3f z: %.3f",pos.v[0], pos.v[1], pos.v[2]);
+		else
+			sprintf(cB, "            INVALID");
+		return cB;
+}
+

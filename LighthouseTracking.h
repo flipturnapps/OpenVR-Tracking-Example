@@ -17,6 +17,7 @@ struct _InitFlags
 		bool printEvents = true;
 		bool printSetIds = true;
 		bool printBEvents = true;
+		bool printTrack = true;
 };
 typedef struct _InitFlags InitFlags;
 
@@ -30,6 +31,8 @@ private:
 	//Returns xyz coordinates from the matrix that is returned by the VR system functions
 	//  see the HMDCoords() and ControllerCoords() methods for usage
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
+
+	HmdQuaternion_t GetRotation(vr::HmdMatrix34_t matrix);
 
 	InitFlags flags;
 
@@ -98,6 +101,10 @@ public:
 	*/
 	void setHands();
 
+	char* getEnglishTrackingResultForPose(TrackedDevicePose_t pose);
+	char* getEnglishPoseValidity(TrackedDevicePose_t pose);
+	char* getPoseXYZString(TrackedDevicePose_t pose);
+
 	struct _ControllerData
 	{
 		//Fields to be initialzed by iterateAssignIds() and setHands()
@@ -113,6 +120,8 @@ public:
  		
  		//Position set in ControllerCoords()
     	HmdVector3_t pos;
+
+    	bool isValid;
 	};
 	typedef struct _ControllerData ControllerData;
 
@@ -147,6 +156,9 @@ public:
 	unsigned long gripMillis;
 	
 	unsigned const int MAX_CYLINDERS = 10;
+
+	char* coordsBuf;
+	char* trackBuf;
 
 };
 
