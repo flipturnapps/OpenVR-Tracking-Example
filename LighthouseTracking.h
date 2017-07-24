@@ -28,6 +28,7 @@ public:
 	void HMDCoords();
 	void ControllerCoords();
 	void dealWithButtonEvent(VREvent_t);
+	void setHands();
 
 	struct _ControllerData
 	{
@@ -46,16 +47,20 @@ public:
 
 	ControllerData controllers[2];
 
+	long minuteCount = 0; 
 	int hmdDeviceId = -1;
-	long int controllerInitCount = 0;
-	int initPassCount = 0;
+	long controllerInitCount = 0;
+	
 	
 	Cylinder** cylinders;
 
 	bool inDrawingMode = true;
 	int cylinderIndex = 0;
 	bool doRumbleNow = false;
-	long rumbleMsOffset = 0;
+	unsigned long rumbleMsOffset = 0;
+
+	unsigned long gripMillis; //Stores the number of ms elapsed when the grip was released.
+	unsigned const int MAX_CYLINDERS = 10;
 };
 
 #endif

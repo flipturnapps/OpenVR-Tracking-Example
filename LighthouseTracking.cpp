@@ -47,8 +47,8 @@ LighthouseTracking::LighthouseTracking()
 	}
 
 	//If the init didn't fail, init the Cylinder object array
-	cylinders = new Cylinder*[10];
-	for(int i = 0 ; i < 10; i++)
+	cylinders = new Cylinder*[MAX_CYLINDERS];
+	for(int i = 0 ; i < MAX_CYLINDERS; i++)
 	{
 		cylinders[i] = new Cylinder();
 	}
@@ -168,8 +168,7 @@ bool LighthouseTracking::ProcessVREvent(const VREvent_t & event)
 	return true;
 }
 
-//Stores the number of ms elapsed when the grip was released.
-long gripMillis;
+
 
 
 //This method deals exclusively with button events
@@ -249,7 +248,7 @@ void LighthouseTracking::dealWithButtonEvent(VREvent_t event)
 			{
 				if (pC->padX < 0 && cylinderIndex != 0)       //If left side of pad was pressed and there is a previous cylinder
 					cylinderIndex = cylinderIndex-1;          //Switch index to previous cylinder
-				else if (pC->padX > 0 && cylinderIndex < 10)  //If the right side of the pad was pressed 
+				else if (pC->padX > 0 && cylinderIndex < MAX_CYLINDERS)  //If the right side of the pad was pressed 
 					cylinderIndex = cylinderIndex+1;          //Switch the index to the next cylinder
 				doRumbleNow = true;
 			}
@@ -281,9 +280,6 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 
 void LighthouseTracking::iterateAssignIds()
 {
-	initPassCount = 0; // initPassCount is a field which counts how many frames have gone by without running this method
-	                   //   if this method is currently executing, then zero frames have gone by since the last time it ran
-	
 	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)  // Iterates across all of the potential device indicies
 	{
 		if (!vr_pointer->IsTrackedDeviceConnected(i))
@@ -318,10 +314,10 @@ void LighthouseTracking::iterateAssignIds()
 			pC->deviceId = i;
 
 
-
+			//Used to get/store property ids for the xy of the pad and the analog reading of the trigger
 			for(int x=0; x<k_unControllerStateAxisCount; x++ )
             {
-                int prop = vr_pointer->GetInt32TrackedDeviceProperty(pController->deviceId, 
+                int prop = vr_pointer->GetInt32TrackedDeviceProperty(pC->deviceId, 
                     (ETrackedDeviceProperty)(Prop_Axis0Type_Int32 + x));
 
                 if( prop==k_eControllerAxis_Trigger )
@@ -330,33 +326,47 @@ void LighthouseTracking::iterateAssignIds()
                     pC->idpad = x;
             }
 
-
-			controllerInitCount++;
-			printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , pController->idtrigger, (*pController).idpad);
+			controllerInitCount++; //Increment this count so that the other controller gets initialized after initializing this one
+			printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , pC->idtrigger, pC->idpad);
 		}
 			
 	}
 }
 
+void LighthouseTracking::setHands()
+{
+	for (int z =0; z < 2; z++)
+	{
+		ControllerData* pC = &(controllers[z]);
+		if (pC->deviceId < 0 || !vr_pointer->IsTrackedDeviceConnected(pC->deviceId))
+			continue;
+		int sHand = -1;
+		//Invalid hand is actually very common, always need to test for invalid hand (lighthouses have lost tracking)
+		ETrackedControllerRole role = vr_pointer->GetControllerRoleForTrackedDeviceIndex(pC->deviceId);
+		if (role == TrackedControllerRole_Invalid)
+			sHand = 0;
+		else if (role == TrackedControllerRole_LeftHand)
+			sHand = 1;
+		else if (role == TrackedControllerRole_RightHand)
+			sHand = 2;
+		pC->hand = sHand;
+	}
+}
+
 void LighthouseTracking::ParseTrackingFrame() 
 {
-	/*
-		This for loop will iterate over all of the tracked devices.
-		* deviceId is the locaL variable holding the index.
-	*/
-
-	//Runs the iterateAssignIds() method if not every device has an id, or if it has been 5000 iterations
-	if(hmdDeviceId < 0 ||
-		controllers[0].deviceId < 0 ||
+	//Runs the iterateAssignIds() method if...
+	if(hmdDeviceId < 0 ||                    // HMD id not yet initialized
+		controllers[0].deviceId < 0 ||       // One of the controllers not yet initialized
 		controllers[1].deviceId < 0 ||
-		controllers[0].deviceId == controllers[1].deviceId || 
-		controllers[0].hand == controllers[1].hand ||
-		initPassCount > 5000)
+		controllers[0].deviceId == controllers[1].deviceId ||  //Both controllerData structs store the same deviceId
+		controllers[0].hand == controllers[1].hand ||          //Both controllerData structs are the same hand
+		(cpMillis() / 60000) > minuteCount)                    //It has been a minute since last init time
+	{
+		minuteCount = (cpMillis() / 60000);
 		iterateAssignIds();
-	else
-		initPassCount++;
-
-	HMDCoords();
+	}
+	HMDCoords();                            
 	ControllerCoords();
 }
 
@@ -364,66 +374,19 @@ void LighthouseTracking::HMDCoords()
 {
 	if (!vr_pointer->IsTrackedDeviceConnected(hmdDeviceId))
 		return;
+
+	//TrackedDevicePose_t struct is a OpenVR struct. See line 180 in the openvr.h header.
 	TrackedDevicePose_t trackedDevicePose;
 	HmdVector3_t position;
 	if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
 			printf( "\nINFO--Input Focus by Another Process");
-
-	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1);
+	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1); 
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
 	printf("\nCOORDS-- HMD x: %.3f y: %.3f z: %.3f", position.v[0], position.v[1], position.v[2]);
 }
 
 void LighthouseTracking::ControllerCoords()
 {
-	TrackedDevicePose_t trackedDevicePose;
-	VRControllerState_t controllerState;
-
-	char** bufs = new char*[2];
-	bool* isOk = new bool[2];
-	for(int i = 0; i < 2; i++)
-	{
-		isOk[i] = false;
-		char* buf = new char[100];
-		ControllerData* controller = &(controllers[i]);
-
-		if (controller->deviceId < 0 || 
-			!vr_pointer->IsTrackedDeviceConnected(controller->deviceId) || 
-			controller->hand <= 0)
-			continue;
-
-		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, controller->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
-		controller->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-		
-		char handString[6];
-
-		if (controller->hand == 1)
-			sprintf(handString, "LEFT");
-		else if (controller->hand == 2)
-			sprintf(handString, "RIGHT");
-
-		printf(" %s x: %.3f y: %.3f z: %.3f", handString, controller->pos.v[0], controller->pos.v[1], controller->pos.v[2]);	
-
-		int t = controller->idtrigger;
-		int p = controller->idpad;
-
-		controller->trigVal = controllerState.rAxis[t].x;
-		controller->padX = controllerState.rAxis[p].x;
-		controller->padY = controllerState.rAxis[p].y;
-
-		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, controller->hand , controller->trigVal , controller->padX , controller->padY);
-		bufs[i] = buf;
-		isOk[i] = true;
-	}
-	
-	if(false && isOk[0] == true)
-	{
-		printf("\nBUTTON-S-- %s",( (bufs[0]) ) );
-		if(isOk[1] == true)
-		{
-			printf("  %s",( (bufs[1]) ) );
-		}
-	}
 
 	if(doRumbleNow)
 	{
@@ -431,26 +394,73 @@ void LighthouseTracking::ControllerCoords()
 		doRumbleNow = false;
 	}
 
-	int indexN = ((cpMillis()-rumbleMsOffset)/150)%(125);
-	for (int i = 0; i < 2; i++)
-	{
+	TrackedDevicePose_t trackedDevicePose;
+	VRControllerState_t controllerState;
 
-		ControllerData c = controllers[i];
-
-		if(!inDrawingMode)
-		for(int x = 0; x < 10 ; x++)
-		{
-			Cylinder*  currCy = cylinders[x];
-			if(!inDrawingMode && currCy->hasInit && currCy->isInside(c.pos.v[0],c.pos.v[1],c.pos.v[2] ))
-				vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,400);
-		}
-
-
-		if (inDrawingMode && indexN % 3 == 0 && indexN < (cylinderIndex+1)*3)
-			vr_pointer->TriggerHapticPulse(c.deviceId,c.idpad,300);	
-	}	
-
-
+	//Arrays to contain information about the results of the button state sprintf call 
+	//  so that the button state information can be printed all on one line for both controllers
+	char** bufs = new char*[2]; 
+	bool* isOk = new bool[2];
 	
-   // printf("\n%lld",cpMillis());
+	//Stores the number of times 150ms have elapsed (loops with the % operator because 
+	//  the "cylinder count" rumbling starts when indexN is one).
+	int indexN = ((cpMillis()-rumbleMsOffset)/150)%(125); 
+
+	//Loops for each ControllerData struct
+	for(int i = 0; i < 2; i++)
+	{
+		isOk[i] = false;
+		char* buf = new char[100];
+		ControllerData* pC = &(controllers[i]);
+
+		if (pC->deviceId < 0 || 
+			!vr_pointer->IsTrackedDeviceConnected(pC->deviceId) || 
+			pC->hand </*=  Allow printing coordinates for invalid hand? Yes.*/ 0)
+			continue;
+
+		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pC->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
+		pC->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
+		
+		char handString[6];
+
+		if (pC->hand == 1)
+			sprintf(handString, "LEFT");
+		else if (pC->hand == 2)
+			sprintf(handString, "RIGHT");
+
+		printf(" %s x: %.3f y: %.3f z: %.3f", handString, pC->pos.v[0], pC->pos.v[1], pC->pos.v[2]);	
+
+		int t = pC->idtrigger;
+		int p = pC->idpad;
+
+		//This is the call to get analog button data from the controllers
+		pC->trigVal = controllerState.rAxis[t].x;
+		pC->padX = controllerState.rAxis[p].x;
+		pC->padY = controllerState.rAxis[p].y;
+
+		sprintf(buf,"hand=%s handid=%d trigger=%f padx=%f pady=%f", handString, pC->hand , pC->trigVal , pC->padX , pC->padY);
+		bufs[i] = buf;
+		isOk[i] = true;
+
+		//The following block controlls the rumbling of the controllers
+		if(!inDrawingMode) //Will iterate across all cylinders if in sensing mode
+		for(int x = 0; x < MAX_CYLINDERS; x++)
+		{
+			Cylinder* currCy = cylinders[x];
+			if(currCy->hasInit && 
+				currCy->isInside(pC->pos.v[0],pC->pos.v[1],pC->pos.v[2]))
+				vr_pointer->TriggerHapticPulse(pC->deviceId,pC->idpad,500); //Vibrates if the controller is colliding with the cylinder bounds
+		}
+		if (inDrawingMode && indexN % 3 == 0 && indexN < (cylinderIndex+1)*3) //Vibrates the current cylinderIndex every thirty seconds or so
+			vr_pointer->TriggerHapticPulse(pC->deviceId,pC->idpad,300);	      //  see the definition of indexN above before the for loop
+	}
+	
+	if(isOk[0] == true)
+	{
+		printf("\nBUTTON-S-- %s", bufs[0]);
+		if(isOk[1] == true)
+		{
+			printf("  %s", bufs[1]);
+		}
+	}
 }
