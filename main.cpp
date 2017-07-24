@@ -9,7 +9,7 @@ int main( int argc, // Number of strings in array argv
 {
 	InitFlags flags;
 	bool isHelp = false;
-
+	bool invert = false;
 	for (int x = 0; x < argc; x++)
 	{
 		char* currString = argv[x];
@@ -29,6 +29,10 @@ int main( int argc, // Number of strings in array argv
 				flags.printEvents = false;
 			if(currString[y] == 'i')
 				flags.printSetIds = false;
+			if(currString[y] == 'b')
+				flags.printBEvents = false;
+			if(currString[y] == 'I')
+				invert = true;
 		}
 
 		if(!isFlag)
@@ -43,18 +47,33 @@ int main( int argc, // Number of strings in array argv
 				flags.printEvents = false;
 			if( strcasecmp("--noids",currString) == 0 )
 				flags.printSetIds = false;
+			if( strcasecmp("--nobevents",currString) == 0 )
+				flags.printBEvents = false;
+			if( strcasecmp("--invert",currString) == 0 )
+				invert = true;
 		}
+	}
+
+	if(invert)
+	{
+		flags.printCoords = !flags.printCoords;
+		flags.printAnalog = !flags.printAnalog;
+		flags.printEvents = !flags.printEvents;
+		flags.printSetIds = !flags.printSetIds;
+		flags.printBEvents = !flags.printBEvents;
 	}
 
 	if(isHelp)
 	{
 		printf("Vive LighthouseTracking Example by Kevin Kellar.\n");
 		printf("Command line arguments:\n");
-		printf("  -h --help     -> Prints this help text. \n");
-		printf("  -c --noCoords -> Do not print HMD/Controller coordinates. \n");
-		printf("  -a --noAnalog -> Do not print analog button data from the controllers. \n");
-		printf("  -e --noEvents -> Do not print VR events as they happen. \n");
-		printf("  -i --noIds    -> Do not print the output from initAssignIds() as the devices are given ids. \n");
+		printf("  -h --help      -> Prints this help text. \n");		
+		printf("  -a --noAnalog  -> Do not print analog button data from the controllers. \n");
+		printf("  -b --noBevents -> Do not print button event data. \n");		
+		printf("  -c --noCoords  -> Do not print HMD/Controller coordinates. \n");		
+		printf("  -e --noEvents  -> Do not print VR events as they happen. \n");
+		printf("  -i --noIds     -> Do not print the output from initAssignIds() as the devices are given ids. \n");
+		printf("  -I --invert    -> Inverts the noprint (a,b,c,e,i) flags.  Useful for specifying the few types of output you want. \n");
 		return EXIT_SUCCESS;
 	}
 	

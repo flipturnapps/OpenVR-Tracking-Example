@@ -16,6 +16,7 @@ struct _InitFlags
 		bool printAnalog = true;
 		bool printEvents = true;
 		bool printSetIds = true;
+		bool printBEvents = true;
 };
 typedef struct _InitFlags InitFlags;
 
