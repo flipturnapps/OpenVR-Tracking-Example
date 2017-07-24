@@ -7,42 +7,59 @@ int main( int argc, // Number of strings in array argv
  char *argv[],      // Array of command-line argument strings  
  char **envp )      // Array of environment variable strings  
 {
-	for (int i = 0; i < argc; i++)
-	{
-		printf("--ARGECHO #%d: %s\n",i,argv[i]);
-	}
 	InitFlags flags;
+	bool isHelp = false;
+
 	for (int x = 0; x < argc; x++)
 	{
 		char* currString = argv[x];
 		int len = strlen(currString);
 		bool isFlag = len > 1 && currString[0] == '-' && '-' != currString[1];
-		printf("--STRLEN %s is %d long. flag=%s\n",currString,len,isFlag ? "true" : "false");
 
 		if (isFlag)
 		for(int y = 1; y < len; y++)
 		{
 			if(currString[y] == 'h')
-				printf("help\n");
+				isHelp = true;
 			if(currString[y] == 'c')
-				printf("coords\n");
-			if(currString[y] == 's')
-				printf("states\n");
+				flags.printCoords = false;
+			if(currString[y] == 'a')
+				flags.printAnalog = false;
+			if(currString[y] == 'e')
+				flags.printEvents = false;
+			if(currString[y] == 'i')
+				flags.printSetIds = false;
 		}
 
 		if(!isFlag)
 		{
 			if( strcasecmp("--help",currString) == 0 )
-				printf("bighelp\n");
+				isHelp = true;
+			if( strcasecmp("--nocoords",currString) == 0 )
+				flags.printCoords = false;
+			if( strcasecmp("--noanalog",currString) == 0 )
+				flags.printAnalog = false;
+			if( strcasecmp("--noevents",currString) == 0 )
+				flags.printEvents = false;
+			if( strcasecmp("--noids",currString) == 0 )
+				flags.printSetIds = false;
 		}
 	}
 
-
-	return EXIT_SUCCESS;
-
-
+	if(isHelp)
+	{
+		printf("Vive LighthouseTracking Example by Kevin Kellar.\n");
+		printf("Command line arguments:\n");
+		printf("  -h --help     -> Prints this help text. \n");
+		printf("  -c --noCoords -> Do not print HMD/Controller coordinates. \n");
+		printf("  -a --noAnalog -> Do not print analog button data from the controllers. \n");
+		printf("  -e --noEvents -> Do not print VR events as they happen. \n");
+		printf("  -i --noIds    -> Do not print the output from initAssignIds() as the devices are given ids. \n");
+		return EXIT_SUCCESS;
+	}
+	
 	// Create a new LighthouseTracking instance and parse as needed
-	LighthouseTracking* lighthouseTracking = new LighthouseTracking();
+	LighthouseTracking* lighthouseTracking = new LighthouseTracking(flags);
 	if (lighthouseTracking) //null check
 	{
 		cpSleep(2000);

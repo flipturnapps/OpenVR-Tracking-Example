@@ -15,8 +15,10 @@ LighthouseTracking::~LighthouseTracking()
 }
 
 // Constructor for the LighthouseTracking object
-LighthouseTracking::LighthouseTracking() 
+LighthouseTracking::LighthouseTracking(InitFlags f) 
 {
+	flags = f;
+	
 	// Definition of the init error
 	EVRInitError eError = VRInitError_None;
 

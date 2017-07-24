@@ -10,6 +10,15 @@
 
 using namespace vr;
 
+struct _InitFlags
+{
+		bool printCoords = true;
+		bool printAnalog = true;
+		bool printEvents = true;
+		bool printSetIds = true;
+};
+typedef struct _InitFlags InitFlags;
+
 class LighthouseTracking 
 {
 
@@ -21,13 +30,15 @@ private:
 	//  see the HMDCoords() and ControllerCoords() methods for usage
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
 
+	InitFlags flags;
+
 public:
 
 	//Destructor
 	~LighthouseTracking();
 
 	//Initializes the VR system and the array of cylinders
-	LighthouseTracking();
+	LighthouseTracking(InitFlags f);
 
 	/* Is called in a loop from the main methods in main.cpp
 	 * Returns false if the VR system has stopped.
@@ -135,14 +146,7 @@ public:
 	unsigned long gripMillis;
 	
 	unsigned const int MAX_CYLINDERS = 10;
-};
 
-struct _InitFlags
-	{
-		bool printCoords = true;
-		bool printButtonStates = false;
-		bool printEvents = true;
-	};
-	typedef struct _InitFlags InitFlags;
+};
 
 #endif
