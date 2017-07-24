@@ -12,6 +12,7 @@ public:
 	void init();
 	bool isInside(float x, float y, float z);
 
+	//Two points in xyz coordinates to use to make the cylinder in init()
 	float* s1;
 	float* s2;
 

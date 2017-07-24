@@ -72,41 +72,67 @@ public:
 	*/
 	void HMDCoords();
 
-	
+	/* For each controller:
+	 * Gets controller state and pose from the VR system
+	 * Prints controller coords
+	 * Gets/prints button states (analog data) from the conrollers
+	 * Rumbles the controllers based on the current mode/inputs
+	*/
 	void ControllerCoords();
 	
+	/* CURRENTLY NOT BEING CALLED BY ANY FUNCTION
+	 * If called every frame before ControllerCoords, should result in smoother 
+	     contoller reconnection after leaving room bounds
+	*/
 	void setHands();
 
 	struct _ControllerData
 	{
-   		int deviceId = -1;
-    	int hand = -1; 
-    	int idtrigger = -1;
-    	int idpad = -1;
+		//Fields to be initialzed by iterateAssignIds() and setHands()
+   		int deviceId = -1;   // Device ID according to the SteamVR system
+    	int hand = -1;       // 0=invalid 1=left 2=right
+    	int idtrigger = -1;  // Trigger axis id
+    	int idpad = -1;      // Touchpad axis id
 
+    	//Analog button data to be set in ContollerCoods()
     	float padX;
     	float padY;
     	float trigVal;
-
+ 		
+ 		//Position set in ControllerCoords()
     	HmdVector3_t pos;
 	};
 	typedef struct _ControllerData ControllerData;
 
+	//An array of ControllerData structs
 	ControllerData controllers[2];
 
-	long minuteCount = 0; 
+	//Number of minutes that have elapsed as set in ParseTrackingFrame() 
+	//  used for deciding whether or not to run iterateAssignIds()
+	long minuteCount = 0;
+
 	int hmdDeviceId = -1;
+
+	//Used in iterateAssignIds to alternate which ControllerData struct gets initialized
 	long controllerInitCount = 0;
 	
-	
+	//Initialized in the constuctor as an array of Cylinder object pointers
 	Cylinder** cylinders;
 
+	//If not in drawing mode, then in sensing mode
+	//  gets set in dealWithButtonEvent() and tested in ControllerCoords()
 	bool inDrawingMode = true;
+
+	//The index of the array of cylinders that is currently being edited
 	int cylinderIndex = 0;
+
+	//If true, ControllerCoords() will set rumbleMsOffset to now to trigger rumble if in drawingMode
 	bool doRumbleNow = false;
 	unsigned long rumbleMsOffset = 0;
 
-	unsigned long gripMillis; //Stores the number of ms elapsed when the grip was released.
+	//The number of ms when the grip button was released
+	unsigned long gripMillis;
+	
 	unsigned const int MAX_CYLINDERS = 10;
 };
 
