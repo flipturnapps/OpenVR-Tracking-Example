@@ -429,7 +429,7 @@ void LighthouseTracking::HMDCoords()
 
 void LighthouseTracking::ControllerCoords()
 {
-
+	setHands();
 	if(doRumbleNow)
 	{
 		rumbleMsOffset = cpMillis();
@@ -469,7 +469,9 @@ void LighthouseTracking::ControllerCoords()
 			sprintf(handString, "LEFT");
 		else if (pC->hand == 2)
 			sprintf(handString, "RIGHT");
-
+		else if(pC->hand == 0)
+			sprintf(handString, "INVALID");
+		
 		pC->isValid =trackedDevicePose.bPoseIsValid;
 
 		
@@ -565,6 +567,9 @@ char* LighthouseTracking::getEnglishPoseValidity(TrackedDevicePose_t pose)
 	char* buf = new char[50];
 	if(pose.bPoseIsValid)
 		sprintf(buf, "Valid");
+	else
+		sprintf(buf, "Invalid");
+	return buf;
 }
 
 char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
@@ -574,17 +579,7 @@ char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 	if(pose.bPoseIsValid)
 		sprintf(cB, "x: %.3f y: %.3f z: %.3f",pos.v[0], pos.v[1], pos.v[2]);
 	else
-		sprintf(cB, "            INVALID");
-
-	if(hand == 1 || hand == 2)
-	{
-		if(!hasFilesInit)
-			filesInit();
-		fprintf(fileArrays[hand-1][0],"%ld\n",cpMillis());
-		fprintf(fileArrays[hand-1][1],"%.5f\n",pos.v[0]);
-		fprintf(fileArrays[hand-1][2],"%.5f\n",pos.v[1]);
-		fprintf(fileArrays[hand-1][3],"%.5f\n",pos.v[2]);
-	}
+		sprintf(cB, "            INVALID");	
 	return cB;
 }
 
