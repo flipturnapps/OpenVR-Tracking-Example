@@ -6,11 +6,11 @@
 extern FILE*** fileArrays;
 extern bool hasFilesInit;
 
-void init();
+void filesInit();
 void openAll();
 void closeAll();
 void forEach( void (*func) (FILE*,int o, int i) );
-void open(FILE* file, int o, int i);
-void close(FILE* file, int o, int i);
+void filesOpen(FILE* file, int o, int i);
+void filesClose(FILE* file, int o, int i);
 
 #endif

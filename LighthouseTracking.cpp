@@ -575,6 +575,16 @@ char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 		sprintf(cB, "x: %.3f y: %.3f z: %.3f",pos.v[0], pos.v[1], pos.v[2]);
 	else
 		sprintf(cB, "            INVALID");
+
+	if(hand == 1 || hand == 2)
+	{
+		if(!hasFilesInit)
+			filesInit();
+		fprintf(fileArrays[hand-1][0],"%ld\n",cpMillis());
+		fprintf(fileArrays[hand-1][1],"%.5f\n",pos.v[0]);
+		fprintf(fileArrays[hand-1][2],"%.5f\n",pos.v[1]);
+		fprintf(fileArrays[hand-1][3],"%.5f\n",pos.v[2]);
+	}
 	return cB;
 }
 

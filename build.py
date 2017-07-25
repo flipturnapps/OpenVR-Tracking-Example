@@ -83,7 +83,7 @@ print "Found the openvr binaries: '" + openvr_bin + "'\n"
 
 print "Generating compile command..."
 
-comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -o build/track *.cpp -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
+comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -o build/track *.cpp *.c -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
 
 print " - Command: " + comp + "\n"
 

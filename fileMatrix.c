@@ -3,7 +3,7 @@
 FILE*** fileArrays;
 bool hasFilesInit = false;
 
-void init()
+void filesInit()
 {
 	if(hasFilesInit)
 		closeAll();
@@ -20,14 +20,14 @@ void init()
 void openAll()
 {
 	void (*func)(FILE*,int o, int i);
-	func = open;
+	func = filesOpen;
 	forEach(func);
 }
 
 void closeAll()
 {
 	void (*func)(FILE*,int o, int i);
-	func = open;
+	func = filesClose;
 	forEach(func);
 }
 
@@ -43,7 +43,7 @@ void forEach( void (*func) (FILE*,int o, int i) )
 	}
 }
 
-void open(FILE* file, int o, int i)
+void filesOpen(FILE* file, int o, int i)
 {
 	char* name = new char[20];
 	if(o == 0)
@@ -61,7 +61,7 @@ void open(FILE* file, int o, int i)
 	file = fopen(name,"w");	
 }
 
-void close(FILE* file, int o, int i)
+void filesClose(FILE* file, int o, int i)
 {
 	fclose(file);
 }
