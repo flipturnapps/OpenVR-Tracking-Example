@@ -352,11 +352,10 @@ void LighthouseTracking::iterateAssignIds()
                     pC->idtrigger = x;
                 else if( prop==k_eControllerAxis_TrackPad )
                     pC->idpad = x;
-            }
-
-			numControllersInitialized++; //Increment this count so that the other controller gets initialized after initializing this one
+            }			
 			if(flags.printSetIds)
-				printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , pC->idtrigger, pC->idpad);
+				printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",numControllersInitialized,sHand, i , pC->idtrigger, pC->idpad);
+			numControllersInitialized++; //Increment this count so that the other controller gets initialized after initializing this one
 		}
 		else if(trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_GenericTracker)
 		{
@@ -393,7 +392,7 @@ void LighthouseTracking::setHands()
 void LighthouseTracking::ParseTrackingFrame() 
 {
 	//Runs the iterateAssignIds() method if...
-	if(hmdDeviceId < 0 ||                    // HMD id not yet initialized
+	if(hmdDeviceId < 0 ||                     // HMD id not yet initialized
 		controllers[0].deviceId < 0 ||       // One of the controllers not yet initialized
 		controllers[1].deviceId < 0 ||
 		controllers[0].deviceId == controllers[1].deviceId ||  //Both controllerData structs store the same deviceId
@@ -424,7 +423,7 @@ void LighthouseTracking::HMDCoords()
 			printf( "\nINFO--Input Focus by Another Process");
 	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1); 
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
-	sprintf(coordsBuf,"HMD %-28.28s", getPoseXYZString(trackedDevicePose));
+	sprintf(coordsBuf,"HMD %-28.28s", getPoseXYZString(trackedDevicePose,0));
 	sprintf(trackBuf,"HMD: %-25.25s %-7.7s " , getEnglishTrackingResultForPose(trackedDevicePose) , getEnglishPoseValidity(trackedDevicePose));
 }
 
@@ -474,7 +473,7 @@ void LighthouseTracking::ControllerCoords()
 		pC->isValid =trackedDevicePose.bPoseIsValid;
 
 		
-		sprintf(coordsBuf,"%s %s: %-28.28s",coordsBuf, handString, getPoseXYZString(trackedDevicePose));
+		sprintf(coordsBuf,"%s %s: %-28.28s",coordsBuf, handString, getPoseXYZString(trackedDevicePose,pC->hand));
 		sprintf(trackBuf,"%s %s: %-25.25s %-7.7s" , trackBuf, handString, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
 
 		int t = pC->idtrigger;
@@ -522,15 +521,15 @@ void LighthouseTracking::TrackerCoords()
 		TrackerData* pT = &(trackers[i]);
 
 		if (pT->deviceId < 0 || 
-			!vr_pointer->IsTrackedDeviceConnected(pT->deviceId) || 
+			!vr_pointer->IsTrackedDeviceConnected(pT->deviceId) ) 
 			continue;
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pT->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		pT->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
 		pT->isValid =trackedDevicePose.bPoseIsValid;
 
-		sprintf(coordsBuf,"%s T%d: %-28.28s",coordsBuf, i, getPoseXYZString(trackedDevicePose));
-		sprintf(trackBuf,"%s %s: %-25.25s %-7.7s" , trackBuf, handString, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
+		sprintf(coordsBuf,"%s T%d: %-28.28s",coordsBuf, i, getPoseXYZString(trackedDevicePose,0));
+		sprintf(trackBuf,"%s T%d: %-25.25s %-7.7s" , trackBuf, i, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
 	}
 }
 
@@ -566,19 +565,16 @@ char* LighthouseTracking::getEnglishPoseValidity(TrackedDevicePose_t pose)
 	char* buf = new char[50];
 	if(pose.bPoseIsValid)
 		sprintf(buf, "Valid");
-	else
-		sprintf(buf, "Invalid");
-	return buf;
 }
 
-char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose)
+char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 {
 	HmdVector3_t pos = GetPosition(pose.mDeviceToAbsoluteTracking);
 	char* cB = new char[50];
-		if(pose.bPoseIsValid)
-			sprintf(cB, "x: %.3f y: %.3f z: %.3f",pos.v[0], pos.v[1], pos.v[2]);
-		else
-			sprintf(cB, "            INVALID");
-		return cB;
+	if(pose.bPoseIsValid)
+		sprintf(cB, "x: %.3f y: %.3f z: %.3f",pos.v[0], pos.v[1], pos.v[2]);
+	else
+		sprintf(cB, "            INVALID");
+	return cB;
 }
 

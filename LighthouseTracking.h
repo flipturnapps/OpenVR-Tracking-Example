@@ -7,6 +7,7 @@
 #include <iostream>
 #include "cylinder.h"
 #include "cpTime.h"
+#include "fileMatrix.h"
 
 using namespace vr;
 
@@ -105,7 +106,7 @@ public:
 
 	char* getEnglishTrackingResultForPose(TrackedDevicePose_t pose);
 	char* getEnglishPoseValidity(TrackedDevicePose_t pose);
-	char* getPoseXYZString(TrackedDevicePose_t pose);
+	char* getPoseXYZString(TrackedDevicePose_t pose, int hand);
 
 	struct _ControllerData
 	{
