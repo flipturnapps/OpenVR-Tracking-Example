@@ -20,6 +20,7 @@ LighthouseTracking::LighthouseTracking(InitFlags f)
 	flags = f;
 	coordsBuf = new char[1024];
 	trackBuf = new char[1024];
+	trackers = new TrackerData[16];
 
 	// Definition of the init error
 	EVRInitError eError = VRInitError_None;
@@ -300,13 +301,13 @@ HmdQuaternion_t LighthouseTracking::GetRotation(vr::HmdMatrix34_t matrix)
 
 void LighthouseTracking::iterateAssignIds()
 {
-
 	//Un-assigns the deviceIds and hands of controllers. If they are truely connected, will be re-assigned later in this function
 	controllers[0].deviceId = -1;
 	controllers[1].deviceId = -1;
 	controllers[0].hand = -1;
 	controllers[1].hand = -1;
 
+	int numTrackersInitialized = 0;
 
 	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)  // Iterates across all of the potential device indicies
 	{
@@ -359,6 +360,12 @@ void LighthouseTracking::iterateAssignIds()
 			if(flags.printSetIds)
 				printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , pC->idtrigger, pC->idpad);
 		}
+		else if(trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_GenericTracker)
+		{
+			TrackerData* pT = &(trackers[numTrackersInitialized]);
+			pT->deviceId = i;
+			numTrackersInitialized++;
+		}
 			
 	}
 }
@@ -398,6 +405,7 @@ void LighthouseTracking::ParseTrackingFrame()
 	}
 	HMDCoords();                            
 	ControllerCoords();
+	TrackerCoords();
 	if(flags.printCoords)
 		printf("\nCOORDS-- %s",coordsBuf);
 	if(flags.printTrack)
@@ -501,6 +509,28 @@ void LighthouseTracking::ControllerCoords()
 		{
 			printf("  %s", bufs[1]);
 		}
+	}
+}
+
+void LighthouseTracking::TrackerCoords()
+{
+	TrackedDevicePose_t trackedDevicePose;
+	VRControllerState_t controllerState;
+
+	for(int i = 0; i < 16; i++)
+	{
+		TrackerData* pT = &(trackers[i]);
+
+		if (pT->deviceId < 0 || 
+			!vr_pointer->IsTrackedDeviceConnected(pT->deviceId) || 
+			continue;
+
+		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pT->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
+		pT->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
+		pT->isValid =trackedDevicePose.bPoseIsValid;
+
+		sprintf(coordsBuf,"%s T%d: %-28.28s",coordsBuf, i, getPoseXYZString(trackedDevicePose));
+		sprintf(trackBuf,"%s %s: %-25.25s %-7.7s" , trackBuf, handString, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
 	}
 }
 

@@ -101,6 +101,8 @@ public:
 	*/
 	void setHands();
 
+	void TrackerCoords();
+
 	char* getEnglishTrackingResultForPose(TrackedDevicePose_t pose);
 	char* getEnglishPoseValidity(TrackedDevicePose_t pose);
 	char* getPoseXYZString(TrackedDevicePose_t pose);
@@ -125,9 +127,17 @@ public:
 	};
 	typedef struct _ControllerData ControllerData;
 
+	struct _TrackerData
+	{
+		int deviceId = -1;   // Device ID according to the SteamVR system
+    	HmdVector3_t pos;
+    	bool isValid;
+	};
+	typedef struct _TrackerData TrackerData;
 
 	//An array of ControllerData structs
 	ControllerData controllers[2];
+	TrackerData* trackers;
 
 	//Number of minutes that have elapsed as set in ParseTrackingFrame() 
 	//  used for deciding whether or not to run iterateAssignIds()
