@@ -20,7 +20,7 @@ nux = "nux" in system().lower()
 win = "win" in system().lower()
 found = False
 
-print "\nThis script will output a script to build the VR Track example.\n"
+print("\nThis script will output a script to build the VR Track example.\n")
 testfile_rel_path = "src/openvr_api_public.cpp"
 
 if (len(sys.argv) > 1):
@@ -29,7 +29,7 @@ if (len(sys.argv) > 1):
 	found = os.path.isfile(ifile) 
 
 if not found:
-	ipath = raw_input("Enter path to the openvr repository clone or press enter\nto have the script search your home directory.\n> ")
+	ipath = input("Enter path to the openvr repository clone or press enter\nto have the script search your home directory.\n> ")
 	ifile = os.path.join(ipath, testfile_rel_path)
 	found = os.path.isfile(ifile) 
 
@@ -38,7 +38,7 @@ if found:
 
 
 if not found:
-	print "Attempting to search home directory for openvr sdk...."
+	print("Attempting to search home directory for openvr sdk....")
 	for root, dirs, files in os.walk(expanduser("~")):
 		for name in files: 
 			absn = os.path.join(root, name)
@@ -50,7 +50,7 @@ if not found:
 				break
 
 if (not found) and win:
-	print "Attempting to search C:\\Users\\ for openvr sdk...."
+	print("Attempting to search C:\\Users\\ for openvr sdk....")
 	winroot = "C:\\Users\\"
 	for root, dirs, files in os.walk(winroot):
 		for name in files: 
@@ -63,13 +63,13 @@ if (not found) and win:
 				break
 			
 if not found:
-	print "Failed to find the openvr sdk. Clone Valve's openvr sdk and try again."
+	print("Failed to find the openvr sdk. Clone Valve's openvr sdk and try again.")
 	sys.exit()
 
 if win:
 	openvr_path = makeWinPath(openvr_path)
 
-print "Found the openvr sdk:      '" + openvr_path + "'"
+print("Found the openvr sdk:      '" + openvr_path + "'")
 
 
 
@@ -79,13 +79,13 @@ if win:
 	openvr_bin = openvr_path + "\\bin\\win64" 
 	openvr_bin = makeWinPath(openvr_bin)
 
-print "Found the openvr binaries: '" + openvr_bin + "'\n"
+print("Found the openvr binaries: '" + openvr_bin + "'\n")
 
-print "Generating compile command..."
+print("Generating compile command...")
 
 comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -o build/track *.cpp *.c -lopenvr_api' % (openvr_bin,openvr_path,openvr_bin) 
 
-print " - Command: " + comp + "\n"
+print(" - Command: " + comp + "\n")
 
 libout = os.path.join(os.getcwd(),"build")
 
@@ -95,7 +95,7 @@ if not os.path.exists(libout):
 if win:
 	libout = makeWinPath(libout)
 	
-print "Copying lib binaries to:   '" + libout + "'"
+print("Copying lib binaries to:   '" + libout + "'")
 
 for root, dirs, files in os.walk(openvr_bin):
 	for name in files: 
@@ -114,9 +114,9 @@ if nux:
 	out.write("#! /bin/sh \n")
 
 
-print "Writing output file to:    '" + outfile  + "'\n"
+print("Writing output file to:    '" + outfile  + "'\n")
 
 out.write(comp + "\n")
 
-print "Finished."
+print("Finished.")
 
