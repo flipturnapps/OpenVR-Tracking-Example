@@ -20,6 +20,7 @@ LighthouseTracking::LighthouseTracking(InitFlags f)
 	flags = f;
 	coordsBuf = new char[1024];
 	trackBuf = new char[1024];
+	rotBuf = new char[1024];
 	trackers = new TrackerData[16];
 
 	// Definition of the init error
@@ -286,7 +287,7 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 
 HmdQuaternion_t LighthouseTracking::GetRotation(vr::HmdMatrix34_t matrix)
 {
-	vr::HmdQuaternion_t q;
+	HmdQuaternion_t q;
 
 	q.w = sqrt(fmax(0, 1 + matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2])) / 2;
 	q.x = sqrt(fmax(0, 1 + matrix.m[0][0] - matrix.m[1][1] - matrix.m[2][2])) / 2;
@@ -409,6 +410,8 @@ void LighthouseTracking::ParseTrackingFrame()
 		printf("\nCOORDS-- %s",coordsBuf);
 	if(flags.printTrack)
 		printf("\nTRACK-- %s",trackBuf);
+	if(flags.printRotation)
+		printf("\nROT-- %s",rotBuf);
 }
 
 void LighthouseTracking::HMDCoords()
@@ -419,12 +422,15 @@ void LighthouseTracking::HMDCoords()
 	//TrackedDevicePose_t struct is a OpenVR struct. See line 180 in the openvr.h header.
 	TrackedDevicePose_t trackedDevicePose;
 	HmdVector3_t position;
+	HmdQuaternion_t rot;
 	if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
 			printf( "\nINFO--Input Focus by Another Process");
 	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1); 
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
+	rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);
 	sprintf(coordsBuf,"HMD %-28.28s", getPoseXYZString(trackedDevicePose,0));
 	sprintf(trackBuf,"HMD: %-25.25s %-7.7s " , getEnglishTrackingResultForPose(trackedDevicePose) , getEnglishPoseValidity(trackedDevicePose));
+	sprintf(rotBuf,"HMD: qw:%.2f qx:%.2f qy:%.2f qz:%.2f",rot.w,rot.x,rot.y,rot.z);
 }
 
 void LighthouseTracking::ControllerCoords()
@@ -438,6 +444,7 @@ void LighthouseTracking::ControllerCoords()
 
 	TrackedDevicePose_t trackedDevicePose;
 	VRControllerState_t controllerState;
+	HmdQuaternion_t rot;
 
 	//Arrays to contain information about the results of the button state sprintf call 
 	//  so that the button state information can be printed all on one line for both controllers
@@ -462,7 +469,8 @@ void LighthouseTracking::ControllerCoords()
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pC->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		pC->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-		
+		rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);	
+
 		char handString[6];
 
 		if (pC->hand == 1)
@@ -477,6 +485,7 @@ void LighthouseTracking::ControllerCoords()
 		
 		sprintf(coordsBuf,"%s %s: %-28.28s",coordsBuf, handString, getPoseXYZString(trackedDevicePose,pC->hand));
 		sprintf(trackBuf,"%s %s: %-25.25s %-7.7s" , trackBuf, handString, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
+		sprintf(rotBuf,"%s %s qw:%.2f qx:%.2f qy:%.2f qz:%.2f",rotBuf,handString,rot.w,rot.x,rot.y,rot.z);
 
 		int t = pC->idtrigger;
 		int p = pC->idpad;
@@ -517,6 +526,7 @@ void LighthouseTracking::TrackerCoords()
 {
 	TrackedDevicePose_t trackedDevicePose;
 	VRControllerState_t controllerState;
+	HmdQuaternion_t rot;
 
 	for(int i = 0; i < 16; i++)
 	{
@@ -528,10 +538,12 @@ void LighthouseTracking::TrackerCoords()
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pT->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		pT->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
+		rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);
 		pT->isValid =trackedDevicePose.bPoseIsValid;
 
 		sprintf(coordsBuf,"%s T%d: %-28.28s",coordsBuf, i, getPoseXYZString(trackedDevicePose,0));
 		sprintf(trackBuf,"%s T%d: %-25.25s %-7.7s" , trackBuf, i, getEnglishTrackingResultForPose(trackedDevicePose), getEnglishPoseValidity(trackedDevicePose));
+		sprintf(rotBuf,"%s T%d: qw:%.2f qx:%.2f qy:%.2f qz:%.2f",rotBuf,i,rot.w,rot.x,rot.y,rot.z);
 	}
 }
 

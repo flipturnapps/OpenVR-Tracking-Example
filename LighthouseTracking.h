@@ -18,6 +18,7 @@ struct _InitFlags
 		bool printSetIds = true;
 		bool printBEvents = true;
 		bool printTrack = true;
+		bool printRotation = true;
 };
 typedef struct _InitFlags InitFlags;
 
@@ -166,6 +167,7 @@ public:
 
 	char* coordsBuf;
 	char* trackBuf;
+	char* rotBuf;
 
 };
 

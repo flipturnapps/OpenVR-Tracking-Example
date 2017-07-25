@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include "LighthouseTracking.h"
 #include "cpTime.h"
-#include <string.h>
+#include <cstring>
+#include <strings.h>
 
 int main( int argc, // Number of strings in array argv  
  char *argv[],      // Array of command-line argument strings  
@@ -10,11 +11,18 @@ int main( int argc, // Number of strings in array argv
 	InitFlags flags;
 	bool isHelp = false;
 	bool invert = false;
+	bool hasHadFlag = false;
 	for (int x = 0; x < argc; x++)
 	{
 		char* currString = argv[x];
 		int len = strlen(currString);
 		bool isFlag = len > 1 && currString[0] == '-' && '-' != currString[1];
+
+		if(!hasHadFlag && isFlag)
+		{
+			hasHadFlag = true;
+			invert = !invert;
+		}
 
 		if (isFlag)
 		for(int y = 1; y < len; y++)
@@ -33,28 +41,32 @@ int main( int argc, // Number of strings in array argv
 				flags.printBEvents = false;
 			if(currString[y] == 't')
 				flags.printTrack = false;
-			if(currString[y] == 'I')
-				invert = true;
+			if(currString[y] == 'r')
+				flags.printRotation = false;
+			if(currString[y] == 'O')
+				invert = !invert;
 		}
 
 		if(!isFlag)
 		{
 			if( strcasecmp("--help",currString) == 0 )
 				isHelp = true;
-			if( strcasecmp("--nocoords",currString) == 0 )
+			if( strcasecmp("--coords",currString) == 0 )
 				flags.printCoords = false;
-			if( strcasecmp("--noanalog",currString) == 0 )
+			if( strcasecmp("--analog",currString) == 0 )
 				flags.printAnalog = false;
-			if( strcasecmp("--noevents",currString) == 0 )
+			if( strcasecmp("--events",currString) == 0 )
 				flags.printEvents = false;
-			if( strcasecmp("--noids",currString) == 0 )
+			if( strcasecmp("--ids",currString) == 0 )
 				flags.printSetIds = false;
-			if( strcasecmp("--nobevents",currString) == 0 )
+			if( strcasecmp("--bevents",currString) == 0 )
 				flags.printBEvents = false;
-			if( strcasecmp("--notrack",currString) == 0 )
+			if( strcasecmp("--track",currString) == 0 )
 				flags.printTrack = false;
-			if( strcasecmp("--invert",currString) == 0 )
-				invert = true;
+			if( strcasecmp("--rot",currString) == 0 )
+				flags.printRotation = false;
+			if( strcasecmp("--omit",currString) == 0 )
+				invert = !invert;
 		}
 	}
 
@@ -66,20 +78,22 @@ int main( int argc, // Number of strings in array argv
 		flags.printSetIds = !flags.printSetIds;
 		flags.printBEvents = !flags.printBEvents;
 		flags.printTrack = !flags.printTrack;
+		flags.printRotation = !flags.printRotation;
 	}
 
 	if(isHelp)
 	{
-		printf("Vive LighthouseTracking Example by Kevin Kellar.\n");
-		printf("Command line arguments:\n");
-		printf("  -h --help      -> Prints this help text. \n");		
-		printf("  -a --noAnalog  -> Do not print analog button data from the controllers. \n");
-		printf("  -b --noBevents -> Do not print button event data. \n");		
-		printf("  -c --noCoords  -> Do not print HMD/Controller coordinates. \n");		
-		printf("  -e --noEvents  -> Do not print VR events as they happen. \n");
-		printf("  -i --noIds     -> Do not print the output from initAssignIds() as the devices are given ids. \n");
-		printf("  -t --noTrack   -> Do not print the tracking state of devices. \n");
-		printf("  -I --invert    -> Inverts the noprint (a,b,c,e,i,t) flags.  Useful for specifying the few types of output you want. \n");
+		printf("\nVive LighthouseTracking Example by Kevin Kellar.\n");
+		printf("Command line flags:\n");
+		printf("  -h --help    -> Prints this help text. The \"Only Print\" flags can be combined for multiple types to both print.\n");		
+		printf("  -a --analog  -> Only print analog button data from the controllers. \n");
+		printf("  -b --bEvents -> Only print button event data. \n");		
+		printf("  -c --coords  -> Only print HMD/Controller coordinates. \n");		
+		printf("  -e --events  -> Only print VR events. \n");
+		printf("  -i --ids     -> Only print the output from initAssignIds() as the devices are given ids. \n");
+		printf("  -r --rot     -> Only print the rotation of devices. \n");
+		printf("  -t --track   -> Only print the tracking state of devices. \n");
+		printf("  -O --omit    -> Omits only the specified output types (a,b,c,e,i,r,t) rather than including only the specified types.  Useful for hiding only a few types of output. \n");
 		return EXIT_SUCCESS;
 	}
 	
