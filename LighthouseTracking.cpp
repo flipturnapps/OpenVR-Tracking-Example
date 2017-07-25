@@ -308,6 +308,7 @@ void LighthouseTracking::iterateAssignIds()
 	controllers[1].hand = -1;
 
 	int numTrackersInitialized = 0;
+	int numControllersInitialized = 0;
 
 	for (unsigned int i = 0; i < k_unMaxTrackedDeviceCount; i++)  // Iterates across all of the potential device indicies
 	{
@@ -324,12 +325,9 @@ void LighthouseTracking::iterateAssignIds()
 			if(flags.printSetIds)
 				printf("\nSETID--Assigned hmdDeviceId=%d",hmdDeviceId);
 		}
-		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller)
+		else if (trackedDeviceClass == ETrackedDeviceClass::TrackedDeviceClass_Controller && numControllersInitialized < 2)
 		{
-			//Uses the modulus operator so that the same controller in the array doesn't keep being initialized.
-			//  Should alternate which index is used each time this block gets run.
-			int initIndex = controllerInitCount % 2; 
-			ControllerData* pC = &(controllers[initIndex]);
+			ControllerData* pC = &(controllers[numControllersInitialized]);
 
 			int sHand = -1;
 
@@ -356,7 +354,7 @@ void LighthouseTracking::iterateAssignIds()
                     pC->idpad = x;
             }
 
-			controllerInitCount++; //Increment this count so that the other controller gets initialized after initializing this one
+			numControllersInitialized++; //Increment this count so that the other controller gets initialized after initializing this one
 			if(flags.printSetIds)
 				printf("\nSETID--Assigned controllers[%d] .hand=%d .deviceId=%d .idtrigger=%d .idpad=%d",initIndex,sHand, i , pC->idtrigger, pC->idpad);
 		}
@@ -364,6 +362,8 @@ void LighthouseTracking::iterateAssignIds()
 		{
 			TrackerData* pT = &(trackers[numTrackersInitialized]);
 			pT->deviceId = i;
+			if(flags.printSetIds)
+				printf("\nSETID--Assigned tracker[%d] .deviceId=%d",numTrackersInitialized,pT->deviceId);
 			numTrackersInitialized++;
 		}
 			

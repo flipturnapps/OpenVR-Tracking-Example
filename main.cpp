@@ -79,7 +79,7 @@ int main( int argc, // Number of strings in array argv
 		printf("  -e --noEvents  -> Do not print VR events as they happen. \n");
 		printf("  -i --noIds     -> Do not print the output from initAssignIds() as the devices are given ids. \n");
 		printf("  -t --noTrack   -> Do not print the tracking state of devices. \n");
-		printf("  -I --invert    -> Inverts the noprint (a,b,c,e,i) flags.  Useful for specifying the few types of output you want. \n");
+		printf("  -I --invert    -> Inverts the noprint (a,b,c,e,i,t) flags.  Useful for specifying the few types of output you want. \n");
 		return EXIT_SUCCESS;
 	}
 	

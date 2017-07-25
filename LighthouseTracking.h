@@ -144,9 +144,6 @@ public:
 	long minuteCount = 0;
 
 	int hmdDeviceId = -1;
-
-	//Used in iterateAssignIds to alternate which ControllerData struct gets initialized
-	long controllerInitCount = 0;
 	
 	//Initialized in the constuctor as an array of Cylinder object pointers
 	Cylinder** cylinders;
