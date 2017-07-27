@@ -2,6 +2,8 @@
 
 This project is a rapid and simple example of how to start a background process for listening to HTC Vive Lighthouse tracking data.  The project interfaces with [Valve's OpenVR SDK](https://github.com/ValveSoftware/openvr).  It was developed cross platform, so the project should compile on both Windows and Linux systems.  If you find that this is not the case, open an issue or contact the developer.
 
+Make sure to see [this entry](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting#unable-to-init-vr-runtime-vrclient-shared-lib-not-found-102) on the [VR Controls](https://github.com/flipturnapps/CassieVrControls) repository's [troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting) if you are having issues trying to interface with [OpenVR](https://github.com/ValveSoftware/openvr)/this project on Linux.
+
 ##  How do I run it?
 The project needs to be built from source.  Follow the step by step guide below to compile the project.
 
@@ -82,7 +84,7 @@ All of the following controls (except toggling modes with the ApplicationMenu bu
 
 ##  Troubleshooting:
 
-See the [Vive troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Vive-Troubleshooting) for Vive/SteamVR issues that were solved.
+See the [Vive troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting) for Vive/SteamVR issues that were solved.
 
 ## Features in Development
 
