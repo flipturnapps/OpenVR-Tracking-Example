@@ -82,31 +82,7 @@ All of the following controls (except toggling modes with the ApplicationMenu bu
 
 ##  Troubleshooting:
 
-### *Unable to init VR runtime: Hmd Not Found (108)*
-
-Solution: Attach the HMD to the computer
-
-
-### *Unable to init VR runtime: Not starting vrserver for background app (121)*
-
-Solution: Start Steam VR
-
-### *Unable to init VR runtime: vrclient Shared Lib Not Found (102)*
-
-I fixed this issue using [this thread](https://github.com/cmbruns/pyopenvr/issues/30) from the [pyopenvr](https://github.com/cmbruns/pyopenvr) repository.  According to this thread, the *libudev.so.1* object needs to be linked to *libudev.so.0* on Linux, using 
-
-```sudo ln -s /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0```.  
-
-Creating this link fixed the above problem for me, but according to an [askubuntu thread](https://askubuntu.com/questions/604331/libudev-so-1-not-found-when-trying-to-run-spotify), this fix can break Unity.  I also went ahead and followed the other fixes in the pyopenvr thread.  
-
-I set my LD_LIBRARY_PATH to
->/home/\<user\>/.local/share/Steam/steamapps/common/SteamVR/bin/linux64:/home/\<user\>/.local/share/Steam/steamapps/common/tools/bin/linux64:.
-
-And I installed the following packages on aptitude:
-* libudev-dev
-* libvulkan-dev
-* libsdl2-dev
-* libglfw3-dev
+See the [Vive troubleshooting guide](https://github.com/flipturnapps/CassieVrConrols/wiki/Vive-Troubleshooting) for Vive/SteamVR issues that were solved.
 
 ## Features in Development
 
