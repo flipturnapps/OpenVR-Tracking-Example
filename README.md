@@ -82,7 +82,7 @@ All of the following controls (except toggling modes with the ApplicationMenu bu
 
 ##  Troubleshooting:
 
-See the [Vive troubleshooting guide](https://github.com/flipturnapps/CassieVrConrols/wiki/Vive-Troubleshooting) for Vive/SteamVR issues that were solved.
+See the [Vive troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Vive-Troubleshooting) for Vive/SteamVR issues that were solved.
 
 ## Features in Development
 
