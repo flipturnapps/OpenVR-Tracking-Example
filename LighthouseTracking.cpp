@@ -589,7 +589,7 @@ char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 	HmdVector3_t pos = GetPosition(pose.mDeviceToAbsoluteTracking);
 	char* cB = new char[50];
 	if(pose.bPoseIsValid)
-		sprintf(cB, "x: %.3f y: %.3f z: %.3f",pos.v[0], pos.v[1], pos.v[2]);
+		sprintf(cB, "x:%.3f y:%.3f z:%.3f",pos.v[0], pos.v[1], pos.v[2]);
 	else
 		sprintf(cB, "            INVALID");	
 	return cB;
