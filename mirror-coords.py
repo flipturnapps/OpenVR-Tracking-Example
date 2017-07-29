@@ -6,15 +6,16 @@ import threading
 
 print("\n")
 
-x = 0
-y = 0
-z = 0
+hmd = vector(0,0,0)
+left = vector(0,0,0)
+right = vector(0,0,0)
+
+devices = [hmd, left, right]
 
 def process():
-	global x
-	global y
-	global z
 	xyz = ['x','y','z']
+	global devices
+	editIndex = -1;
 	while True:
 		try:
 			nInput = input()
@@ -26,26 +27,37 @@ def process():
 		finally:
 			pass
 		for split in splits:
-			if len(split) < 3 or split[1] != ':' or split[0] not in xyz:
+			if "HMD:" in split:
+				editIndex = 0;
+			if "LEFT:" in split:
+				editIndex = 1;
+			if "RIGHT:" in split:
+				editIndex = 2;
+
+			if editIndex < 0 or len(split) < 3 or split[1] != ':' or split[0] not in xyz:
 				continue
 			num = float(split[2:])
 			if split[0] == 'x':
-				x = num;
+				devices[editIndex].z = -num;
 			elif split[0] == 'y':
-				y = num;
+				devices[editIndex].y  = num;
 			elif split[0] == 'z':
-				z = num;
+				devices[editIndex].x  = -num;
 
 
 		
 thread = threading.Thread(target=process)
 thread.start()
 
-b = box(pos=vector(x,y,z), color=color.blue)
-box(color=color.red)
+hmd = box(color=color.black)
+left = box(color=color.blue)
+right = box(color=color.red)
+
+box(color=color.white)
 
 while True:
-	b.pos = vector(x,y,z)
-	print( ("X:%f Y:%f Z:%f" % (x,y,z) ) )
+	hmd.pos = devices[0] * 2
+	left.pos = devices[1] * 2
+	right.pos = devices[2] * 2
 
 
