@@ -20,7 +20,8 @@ def process():
 		numGood = False
 		try:
 			nInput = input()
-			count++
+			count += 1
+			count %= 9
 			if not nInput.lower().startswith('invalid'):
 				num = float(nInput)
 				numGood = True

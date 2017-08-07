@@ -14,10 +14,10 @@ devices = [hmd, left, right]
 
 def process():
 	xyz = ['x','y','z']
-	global devices
-	editIndex = -1;
+	global devices	
 	while True:
 		try:
+			editIndex = -1;
 			nInput = input()
 			splits = nInput.split()    		
 		except Exception as e:
@@ -49,7 +49,7 @@ def process():
 thread = threading.Thread(target=process)
 thread.start()
 
-hmd = box(color=color.black)
+hmd = box(color=color.green)
 left = box(color=color.blue)
 right = box(color=color.red)
 
