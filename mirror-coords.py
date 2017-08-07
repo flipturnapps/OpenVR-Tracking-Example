@@ -27,7 +27,7 @@ def process():
 		finally:
 			pass
 		for split in splits:
-			if "HMD:" in split:
+			if "HMD" in split:
 				editIndex = 0;
 			if "LEFT:" in split:
 				editIndex = 1;
@@ -49,15 +49,16 @@ def process():
 thread = threading.Thread(target=process)
 thread.start()
 
-hmd = box(color=color.green)
-left = box(color=color.blue)
-right = box(color=color.red)
+b_hmd = box(color=color.magenta)
+b_left = box(color=color.blue)
+b_right = box(color=color.red)
 
 box(color=color.white)
 
 while True:
-	hmd.pos = devices[0] * 2
-	left.pos = devices[1] * 2
-	right.pos = devices[2] * 2
+	b_hmd.pos = devices[0] * 2
+	b_left.pos = devices[1] * 2
+	b_right.pos = devices[2] * 2
+	b_left.rotate(angle=.001, axis=vector(0,1,0))
 
 
