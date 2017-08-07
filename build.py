@@ -87,21 +87,6 @@ comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -o build/track *.c
 
 print(" - Command: " + comp + "\n")
 
-libout = os.path.join(os.getcwd(),"build")
-
-if not os.path.exists(libout):
-    os.makedirs(libout)
-
-if win:
-	libout = makeWinPath(libout)
-	
-print("Copying lib binaries to:   '" + libout + "'")
-
-for root, dirs, files in os.walk(openvr_bin):
-	for name in files: 
-		absn = os.path.join(root, name)
-		copy2(absn, libout)
-
 if nux:
 	outfile = libout + "/compile.sh"
 if win:
