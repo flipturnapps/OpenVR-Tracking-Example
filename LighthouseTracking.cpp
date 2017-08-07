@@ -592,6 +592,12 @@ char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 		sprintf(cB, "x:%.3f y:%.3f z:%.3f",pos.v[0], pos.v[1], pos.v[2]);
 	else
 		sprintf(cB, "            INVALID");	
+	if(flags.pipeCoords)
+		for(int i = 0; i < 3; i++)
+			if(pose.bPoseIsValid)
+				printf("%.5f\n",pos.v[i]);
+			else
+				printf("invalid\n",pos.v[i]);
 	return cB;
 }
 

@@ -19,6 +19,7 @@ struct _InitFlags
 		bool printBEvents = true;
 		bool printTrack = true;
 		bool printRotation = true;
+		bool pipeCoords = false;
 };
 typedef struct _InitFlags InitFlags;
 

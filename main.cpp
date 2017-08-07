@@ -43,6 +43,8 @@ int main( int argc, // Number of strings in array argv
 				flags.printTrack = false;
 			if(currString[y] == 'r')
 				flags.printRotation = false;
+			if(currString[y] == 'V')
+				flags.pipeCoords = true;
 			if(currString[y] == 'O')
 				invert = !invert;
 		}
@@ -65,6 +67,8 @@ int main( int argc, // Number of strings in array argv
 				flags.printTrack = false;
 			if( strcasecmp("--rot",currString) == 0 )
 				flags.printRotation = false;
+			if( strcasecmp("--visual",currString) == 0 )
+				flags.pipeCoords = true;
 			if( strcasecmp("--omit",currString) == 0 )
 				invert = !invert;
 		}
@@ -94,7 +98,19 @@ int main( int argc, // Number of strings in array argv
 		printf("  -r --rot     -> Only print the rotation of devices. \n");
 		printf("  -t --track   -> Only print the tracking state of devices. \n");
 		printf("  -O --omit    -> Omits only the specified output types (a,b,c,e,i,r,t) rather than including only the specified types.  Useful for hiding only a few types of output. \n");
+		printf("  -V --visual  -> Streamlines output (coordinates) to be more easily parsed by a visual program. \n");
 		return EXIT_SUCCESS;
+	}
+
+	if(flags.pipeCoords)
+	{
+		flags.printCoords = false;
+		flags.printAnalog = false;
+		flags.printEvents = false;
+		flags.printSetIds = false;
+		flags.printBEvents = false;
+		flags.printTrack = false;
+		flags.printRotation = false;
 	}
 	
 	// Create a new LighthouseTracking instance and parse as needed
