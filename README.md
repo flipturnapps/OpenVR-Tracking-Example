@@ -5,7 +5,10 @@ This project is a rapid and simple example of how to start a background process 
 Make sure to see [this entry](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting#unable-to-init-vr-runtime-vrclient-shared-lib-not-found-102) on the [VR Controls](https://github.com/flipturnapps/CassieVrControls) repository's [troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting) if you are having issues trying to interface with [OpenVR](https://github.com/ValveSoftware/openvr)/this project on Linux.
 
 ##  How do I run it?
-The project needs to be built from source.  Follow the step by step guide below to compile the project.
+
+First, complete the [Vive Setup Guide](https://github.com/flipturnapps/CassieVrControls/wiki/Vive-Setup-Guide) to ensure proper hardware/software setup of the HTC Vive/SteamVR/OpenVR SDK.
+
+After the setup is complete, this project needs to be built from source.  Follow the step by step guide below to compile the project.
 
 ##  How do I compile it?
 
