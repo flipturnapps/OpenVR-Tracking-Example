@@ -6,10 +6,13 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
+using namespace vr;
+
+
 #include "cylinder.h"
 #include "cpTime.h"
 
-using namespace vr;
+
 
 struct _InitFlags
 {
