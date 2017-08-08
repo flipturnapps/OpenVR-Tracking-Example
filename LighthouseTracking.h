@@ -5,6 +5,7 @@
 #include <headers/openvr.h>
 #include <stdio.h>
 #include <iostream>
+#include <math.h>
 #include "cylinder.h"
 #include "cpTime.h"
 
@@ -35,6 +36,8 @@ private:
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
 
 	HmdQuaternion_t GetRotation(vr::HmdMatrix34_t matrix);
+
+	HmdVector3_t ProcessRotation(HmdMatrix34_t matrix);
 
 	InitFlags flags;
 

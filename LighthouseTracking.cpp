@@ -285,7 +285,7 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 	return vector;
 }
 
-HmdQuaternion_t LighthouseTracking::GetRotation(vr::HmdMatrix34_t matrix)
+HmdQuaternion_t LighthouseTracking::GetRotation(HmdMatrix34_t matrix)
 {
 	HmdQuaternion_t q;
 
@@ -297,6 +297,17 @@ HmdQuaternion_t LighthouseTracking::GetRotation(vr::HmdMatrix34_t matrix)
 	q.y = copysign(q.y, matrix.m[0][2] - matrix.m[2][0]);
 	q.z = copysign(q.z, matrix.m[1][0] - matrix.m[0][1]);
 	return q;
+}
+
+HmdVector3_t LighthouseTracking::ProcessRotation(HmdMatrix34_t matrix)
+{
+	HmdVector3_t ret;
+	ret.v[0] = atan2(matrix.m[1][2],matrix.m[2][2]);
+	ret.v[1] = atan2(-matrix.m[0][2],
+		sqrt(matrix.m[1][2]*matrix.m[1][2]+matrix.m[2][2]*matrix.m[2][2]) );
+	ret.v[2] = atan2(matrix.m[0][1],matrix.m[0][0]);
+
+	return ret;
 }
 
 
@@ -586,7 +597,7 @@ char* LighthouseTracking::getEnglishPoseValidity(TrackedDevicePose_t pose)
 
 char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 {
-	HmdVector3_t pos = GetPosition(pose.mDeviceToAbsoluteTracking);
+	HmdVector3_t pos = ProcessRotation(pose.mDeviceToAbsoluteTracking);
 	char* cB = new char[50];
 	if(pose.bPoseIsValid)
 		sprintf(cB, "x:%.3f y:%.3f z:%.3f",pos.v[0], pos.v[1], pos.v[2]);
