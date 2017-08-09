@@ -34,9 +34,20 @@ More information about the compile process and screenshots of what you should se
 
 ## How do I play it?
 
-This branch of the Vive Tracking Example tracks the locations of controllers and the HMD and prints the coordinates, event data, and button data to stdout.  However, to further demonstrate the tracking potential of the Vive system, the bulk of the code on this branch is for a tool where the user draws around obstacles in the room using the Vive controllers so that, when in sensing mode, the controllers can rumble when nearby the obstacles as a "warning".
+### Coordinates Only
 
-### Defining a cylinder around a real-world obstacle
+The easiest way to ensure that the controllers and HMD are tracking properly is to have the program print the coordinates it sees for the devices.  When running the tracking example, to have it only print the coordinates of the devices use the -c option.
+
+```shell
+bash build/compile.sh
+./build/track -c
+```
+
+### Opstacle-sensing game
+
+However, to further demonstrate the tracking potential of the Vive system, the bulk of the code on this branch is for a tool where the user draws around obstacles in the room using the Vive controllers so that, when in sensing mode, the controllers can rumble when nearby the obstacles as a "warning".
+
+#### Defining a cylinder around a real-world obstacle
 
 As of now, the only shapes that can be used for collision testing are cylinders with a height in the direction of the y-axis.  Here are the steps within the program to define an obstacle (cylinder):
 
@@ -55,7 +66,7 @@ As of now, the only shapes that can be used for collision testing are cylinders 
 
 5. Switch to SensingMode by pressing the ApplicationMenu button, and test to see if the controllers will rumble if nearby the obstacle.
 
-### Extending vertical bounds infinitely in one direction
+#### Extending vertical bounds infinitely in one direction
 
 Often, the obstacles you might want to test with are on the floor and don't have any empty space under them.  To define the obstacle with infinite depth going downwards so that you don't have to rub your Vive controllers on the ground to properly define the obstacle, use the following control: 
 
@@ -64,13 +75,13 @@ Often, the obstacles you might want to test with are on the floor and don't have
 3. Lower the controller an arbitrary distance below where the grip was originally heald.
 4. Release the grip and rapidly press and release the grip again to extend the boundary forever in that direction.
 
-### Drawing multiple cylinders
+#### Drawing multiple cylinders
 
 With the current implementation, up to ten different cylinders can be drawn around obstacles.  While in DrawingMode, the controller will occasionally rumble the current index of cylinder that is being edited (starting with one).  To move to the next cylinder, press the right side of the touchpad.  To edit a previous cylinder, press the left side.
 
 When moving to different cylinder, the controllers should vibrate the current index that has been selected.
 
-### Controls Summary
+#### Controls Summary
 
 All of the following controls (except toggling modes with the ApplicationMenu button) only work in DrawingMode.
 
