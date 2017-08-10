@@ -20,7 +20,7 @@ This in short, the following script should properly build and run the project:
 
 ```shell
 
-git clone https://github.com/flipturnapps/OpenVR-Tracking-Example.git ViveTrack
+git clone https://github.com/osudrl/OpenVR-Tracking-Example.git ViveTrack
 cd ViveTrack
 python build.py ~/path/to/openvr/
 bash build/compile.sh
