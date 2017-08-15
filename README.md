@@ -43,6 +43,10 @@ bash build/compile.sh
 ./build/track -c
 ```
 
+### Coordinates Visualized in Vpython
+
+placeholder. use mirror-coords.py
+
 ### Opstacle-sensing game
 
 However, to further demonstrate the tracking potential of the Vive system, the bulk of the code on this branch is for a tool where the user draws around obstacles in the room using the Vive controllers so that, when in sensing mode, the controllers can rumble when nearby the obstacles as a "warning".
