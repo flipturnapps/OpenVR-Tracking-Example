@@ -38,7 +38,7 @@ private:
 	//  see the HMDCoords() and ControllerCoords() methods for usage
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
 
-	HmdQuaternion_t GetRotation(vr::HmdMatrix34_t matrix, bool b);
+	HmdQuaternion_t GetRotation(vr::HmdMatrix34_t matrix);
 
 	HmdQuaternion_t ProcessRotation(HmdQuaternion_t quat);
 
