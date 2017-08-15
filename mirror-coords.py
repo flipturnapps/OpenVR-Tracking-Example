@@ -13,7 +13,7 @@ right = vector(0,0,0)
 devices = [hmd, left, right]
 
 def process():
-	xyz = ['x','y','z']
+	xyz = ['w','x','y','z']
 	global devices	
 	while True:
 		try:
@@ -37,12 +37,14 @@ def process():
 			if editIndex < 0 or len(split) < 3 or split[1] != ':' or split[0] not in xyz:
 				continue
 			num = float(split[2:])
-			if split[0] == 'x':
-				devices[editIndex].z = -num;
+			if split[0] == 'w':
+				devices[editIndex].z = num;
+			elif split[0] == 'x':
+				devices[editIndex].x = num;
 			elif split[0] == 'y':
 				devices[editIndex].y  = num;
 			elif split[0] == 'z':
-				devices[editIndex].x  = -num;
+				devices[editIndex].z  = num;
 
 
 		

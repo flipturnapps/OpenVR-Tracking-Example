@@ -600,7 +600,7 @@ char* LighthouseTracking::getEnglishPoseValidity(TrackedDevicePose_t pose)
 char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 {	
 	int uselessVariable = hand; 
-	
+
 	char* cB = new char[50];
 	/*
 	HmdVector3_t pos = GetPosition(pose.mDeviceToAbsoluteTracking);	
@@ -611,7 +611,7 @@ char* LighthouseTracking::getPoseXYZString(TrackedDevicePose_t pose, int hand)
 	*/
 	HmdQuaternion_t quat = ProcessRotation(GetRotation(pose.mDeviceToAbsoluteTracking));
 	if(pose.bPoseIsValid)
-		sprintf(cB, "x:%.3f y:%.3f z:%.3f",quat.x, quat.y, quat.z);
+		sprintf(cB, "w:%.3f x:%.3f y:%.3f z:%.3f",quat.w,quat.x, quat.y, quat.z);
 	else
 		sprintf(cB, "            INVALID");	
 	return cB;
