@@ -285,7 +285,7 @@ HmdVector3_t LighthouseTracking::GetPosition(HmdMatrix34_t matrix)
 	return vector;
 }
 
-HmdQuaternion_t LighthouseTracking::GetRotation(HmdMatrix34_t matrix)
+HmdQuaternion_t LighthouseTracking::GetRotation(HmdMatrix34_t matrix, bool b)
 {
 	HmdQuaternion_t q;
 
@@ -296,18 +296,21 @@ HmdQuaternion_t LighthouseTracking::GetRotation(HmdMatrix34_t matrix)
 	q.x = copysign(q.x, matrix.m[2][1] - matrix.m[1][2]);
 	q.y = copysign(q.y, matrix.m[0][2] - matrix.m[2][0]);
 	q.z = copysign(q.z, matrix.m[1][0] - matrix.m[0][1]);
+	if (b)
+		ProcessRotation(q);
 	return q;
 }
 
-HmdVector3_t LighthouseTracking::ProcessRotation(HmdMatrix34_t matrix)
+HmdQuaternion_t LighthouseTracking::ProcessRotation(HmdQuaternion_t quat)
 {
-	HmdVector3_t ret;
-	ret.v[0] = atan2(matrix.m[1][2],matrix.m[2][2]);
-	ret.v[1] = atan2(-matrix.m[0][2],
-		sqrt(matrix.m[1][2]*matrix.m[1][2]+matrix.m[2][2]*matrix.m[2][2]) );
-	ret.v[2] = atan2(matrix.m[0][1],matrix.m[0][0]);
+	HmdQuaternion_t out;
+	out.w = 2 * acos(quat.w);
+	out.x = quat.x / sin(out.w/2);
+	out.y = quat.y / sin(out.w/2);
+	out.z = quat.z / sin(out.w/2);
 
-	return ret;
+	printf("\nPROCESSED w:%.3f x:%.3f y:%.3f z:%.3f",out.w,out.x,out.y,out.z);
+	return out;
 }
 
 
@@ -438,7 +441,7 @@ void LighthouseTracking::HMDCoords()
 			printf( "\nINFO--Input Focus by Another Process");
 	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1); 
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
-	rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);
+	rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking,false);
 	sprintf(coordsBuf,"HMD %-28.28s", getPoseXYZString(trackedDevicePose,0));
 	sprintf(trackBuf,"HMD: %-25.25s %-7.7s " , getEnglishTrackingResultForPose(trackedDevicePose) , getEnglishPoseValidity(trackedDevicePose));
 	sprintf(rotBuf,"HMD: qw:%.2f qx:%.2f qy:%.2f qz:%.2f",rot.w,rot.x,rot.y,rot.z);
@@ -480,7 +483,7 @@ void LighthouseTracking::ControllerCoords()
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pC->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		pC->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-		rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);	
+		rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking,i);	
 
 		char handString[6];
 
@@ -549,7 +552,7 @@ void LighthouseTracking::TrackerCoords()
 
 		vr_pointer->GetControllerStateWithPose(TrackingUniverseStanding, pT->deviceId, &controllerState, sizeof(controllerState), &trackedDevicePose);
 		pT->pos = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);	
-		rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);
+		rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking,false);
 		pT->isValid =trackedDevicePose.bPoseIsValid;
 
 		sprintf(coordsBuf,"%s T%d: %-28.28s",coordsBuf, i, getPoseXYZString(trackedDevicePose,0));
