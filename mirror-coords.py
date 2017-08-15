@@ -53,13 +53,16 @@ b_hmd = box(color=color.magenta)
 b_left = box(color=color.blue)
 b_right = box(color=color.red)
 
-b_white = box(color=color.white)
-b_white.pos = vector(0,0,0)
+b_hmd.pos = vector(-1,0,1)
+b_left.pos = vector(0,0,1)
+b_right.pos = vector(1,0,1)
+
+#b_white = box(color=color.white)
+#b_white.pos = vector(0,0,0)
 
 while True:
-	b_hmd.pos = devices[0] * 2
-	b_left.pos = devices[1] * 2
-	b_right.pos = devices[2] * 2
-	b_left.rotate(angle=.001, axis=vector(0,1,0))
+	b_hmd.axis = norm(devices[0])
+	b_left.axis = norm(devices[1])
+	b_right.axis = norm(devices[2])
 
 

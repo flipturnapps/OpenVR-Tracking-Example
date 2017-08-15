@@ -23,7 +23,6 @@ struct _InitFlags
 		bool printBEvents = true;
 		bool printTrack = true;
 		bool printRotation = true;
-		bool pipeCoords = false;
 };
 typedef struct _InitFlags InitFlags;
 
@@ -38,7 +37,7 @@ private:
 	//  see the HMDCoords() and ControllerCoords() methods for usage
 	HmdVector3_t GetPosition(HmdMatrix34_t matrix);
 
-	HmdQuaternion_t GetRotation(vr::HmdMatrix34_t matrix);
+	HmdQuaternion_t GetRotation(HmdMatrix34_t matrix);
 
 	HmdQuaternion_t ProcessRotation(HmdQuaternion_t quat);
 
