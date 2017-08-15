@@ -36,7 +36,11 @@ def process():
 
 			if editIndex < 0 or len(split) < 3 or split[1] != ':' or split[0] not in xyz:
 				continue
-			num = float(split[2:])
+			try:
+				num = float(split[2:])
+			except Exception as e:
+				continue
+			
 			if split[0] == 'x':
 				devices[editIndex].z = -num;
 			elif split[0] == 'y':
