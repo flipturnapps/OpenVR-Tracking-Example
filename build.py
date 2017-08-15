@@ -87,10 +87,12 @@ comp = 'g++ -L%s -I%s -Wl,-rpath,%s -Wall -Wextra  -std=c++0x -o build/track *.c
 
 print(" - Command: " + comp + "\n")
 
+os.mkdir("build")
+
 if nux:
-	outfile = libout + "/compile.sh"
+	outfile = "build/compile.sh"
 if win:
-	outfile = libout + "\\compile.bat"
+	outfile = "build\\compile.bat"
 	outfile = makeWinPath(outfile)
 	
 out = open(outfile,'w+')
