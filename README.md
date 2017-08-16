@@ -108,4 +108,4 @@ See the [Vive troubleshooting guide](https://github.com/osudrl/CassieVrControls/
 
 ## Feedback
 
-Written by [Kevin Kellar](https://github.com/kkevlar) for Oregon State University's [Dynamic Robotics Laboratory](http://mime.oregonstate.edu/research/drl/).  For issues, comments, or suggestions with this guide, contact [Kevin Kellar](https://github.com/kkevlar) or open an issue.
+Written by [Kevin Kellar](https://github.com/kkevlar) for Oregon State University's [Dynamic Robotics Laboratory](http://mime.oregonstate.edu/research/drl/).  For issues, comments, or suggestions with this guide, contact the developer or open an issue.
