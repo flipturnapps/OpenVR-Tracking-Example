@@ -1,12 +1,12 @@
 #  What is this?
 
-This project is a rapid and simple example of how to start a background process for listening to HTC Vive Lighthouse tracking data.  The project interfaces with [Valve's OpenVR SDK](https://github.com/ValveSoftware/openvr).  It was developed cross platform, so the project should compile on both Windows and Linux systems.  If you find that this is not the case, open an issue or contact the developer.
+This project is a rapid and simple example of how to start a background process for listening to HTC Vive Lighthouse tracking data.  It was mostly written to serve as example code for the [OpenVR Quick Start Guide](https://github.com/osudrl/CassieVrControls/wiki/OpenVR-Quick-Start).  The project interfaces with [Valve's OpenVR SDK](https://github.com/ValveSoftware/openvr).  It was developed cross platform, so the project should compile on both Windows and Linux systems.  If you find that this is not the case, open an issue or contact the developer.
 
-Make sure to see [this entry](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting#unable-to-init-vr-runtime-vrclient-shared-lib-not-found-102) on the [VR Controls](https://github.com/flipturnapps/CassieVrControls) repository's [troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting) if you are having issues trying to interface with [OpenVR](https://github.com/ValveSoftware/openvr)/this project on Linux.
+Make sure to see [this entry](https://github.com/osudrl/CassieVrControls/wiki/Troubleshooting#unable-to-init-vr-runtime-vrclient-shared-lib-not-found-102) on the [VR Controls](https://github.com/osudrl/CassieVrControls) repository's [troubleshooting guide](https://github.com/osudrl/CassieVrControls/wiki/Troubleshooting) if you are having issues trying to interface with [OpenVR](https://github.com/ValveSoftware/openvr)/this project on Linux.
 
 ##  How do I run it?
 
-First, complete the [Vive Setup Guide](https://github.com/flipturnapps/CassieVrControls/wiki/Vive-Setup-Guide) to ensure proper hardware/software setup of the HTC Vive/SteamVR/OpenVR SDK.
+First, complete the [Vive Setup Guide](https://github.com/osudrl/CassieVrControls/wiki/Vive-Setup-Guide) to ensure proper hardware/software setup of the HTC Vive/SteamVR/OpenVR SDK.
 
 After the setup is complete, this project needs to be built from source.  Follow the step by step guide below to compile the project.
 
@@ -16,9 +16,10 @@ Make sure **g++** and **python** are installed. If using [cygwin](https://www.cy
 
 Have [openvr](https://github.com/ValveSoftware/openvr) cloned somewhere convenient
 
-This in short, the following script should properly build and run the project: 
+The following script should properly build and run the project: 
 
 ```shell
+# Install Steam and SteamVR
 
 git clone https://github.com/osudrl/OpenVR-Tracking-Example.git ViveTrack
 cd ViveTrack
@@ -30,7 +31,7 @@ bash build/compile.sh
 ./build/track
 
 ```
-More information about the compile process and screenshots of what you should see throughout the process can be found on the [Compile Guide](https://github.com/flipturnapps/OpenVR-Tracking-Example/wiki/CompileGuide).
+More information about compiling this project can be found on the [Compile Guide](https://github.com/osudrl/OpenVR-Tracking-Example/wiki/CompileGuide).
 
 ## How do I play it?
 
@@ -102,15 +103,9 @@ All of the following controls (except toggling modes with the ApplicationMenu bu
 
 ##  Troubleshooting:
 
-See the [Vive troubleshooting guide](https://github.com/flipturnapps/CassieVrControls/wiki/Troubleshooting) for Vive/SteamVR issues that were solved.
+See the [Vive troubleshooting guide](https://github.com/osudrl/CassieVrControls/wiki/Troubleshooting) for Vive/SteamVR issues that were solved.
 
-## Features in Development
 
-- [ ] All new features properly commented
-- [x] Allow for controller states to be tested/printed in English like original project
-- [x] Test/print coords for the vive tracker like the original base of the fork
-- [x] Fix the way that controllers' ids get initialized
-- [x] Use command line arguments to decide what information to print
-- [ ] Allow for the option to print coordinates a text file
-- [x] Allow for rotational data to be printed too
-- [ ] Make some sort of index to easily find answers to how to do simple VR library calls
+## Feedback
+
+Written by [Kevin Kellar](https://github.com/kkevlar) for Oregon State University's [Dynamic Robotics Laboratory](http://mime.oregonstate.edu/research/drl/).  For issues, comments, or suggestions with this guide, contact the developer or open an issue.
