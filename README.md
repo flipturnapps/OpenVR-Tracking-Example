@@ -46,7 +46,9 @@ bash build/compile.sh
 
 ### Coordinates Visualized in Vpython
 
-placeholder. use mirror-coords.py
+1. Install [vpython](http://vpython.org/) on [conda](https://www.anaconda.com/what-is-anaconda/)
+  * `conda install -v vpython vpython`
+2. To run, use `./build/track -c | python mirror-coords.py`.  
 
 ### Opstacle-sensing game
 
