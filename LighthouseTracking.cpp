@@ -434,8 +434,6 @@ void LighthouseTracking::HMDCoords()
 	TrackedDevicePose_t trackedDevicePose;
 	HmdVector3_t position;
 	HmdQuaternion_t rot;
-	if (vr_pointer->IsInputFocusCapturedByAnotherProcess())
-			printf( "\nINFO--Input Focus by Another Process");
 	vr_pointer->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0, &trackedDevicePose, 1); 
 	position = GetPosition(trackedDevicePose.mDeviceToAbsoluteTracking);
 	rot = GetRotation(trackedDevicePose.mDeviceToAbsoluteTracking);
